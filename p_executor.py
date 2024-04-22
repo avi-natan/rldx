@@ -1,6 +1,6 @@
 import gym
 
-from h_consts import EPISODES, DETERMINISTIC, SEED
+from h_consts import EPISODES, DETERMINISTIC, SEED, RENDER_MODE
 from h_fault_model_generator import FaultModelGeneratorDiscrete, same_box_action
 from h_rl_models import models
 
@@ -9,7 +9,7 @@ def execute(env_name, model_name, total_timesteps, fault_model_generator, execut
     print(f'executing with fault model: {execution_fault_model_representation}\n========================================================================================\n')
 
     # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
     initial_obs, _ = env.reset(seed=42)
     print(f'initial observation: {initial_obs.tolist()}')
 

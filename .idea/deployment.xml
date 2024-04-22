@@ -65,6 +65,17 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="rldx">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/natanavr/natanavr/rldx" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/venv" />
+            <excludedPath local="true" path="$PROJECT_DIR$/environments" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
     </serverData>
   </component>
 </project>

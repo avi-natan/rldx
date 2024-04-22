@@ -1,6 +1,6 @@
 import numpy as np
 import gym
-from h_consts import SEED
+from h_consts import SEED, RENDER_MODE
 from h_rl_models import models
 
 
@@ -8,7 +8,7 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, model_name, total_times
     # welcome message
     print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_wfm\n========================================================================================\n')
     # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
     initial_obs, _ = env.reset(seed=SEED)
     print(f'initial observation: {initial_obs.tolist()}')
 
@@ -50,7 +50,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, model_name, total_times
     # welcome message
     print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_sfm\n========================================================================================\n')
     # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
     initial_obs, _ = env.reset(seed=SEED)
     print(f'initial observation: {initial_obs.tolist()}')
 
@@ -66,7 +66,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, model_name, total_times
     # preparing the environments for each of the fault models
     fault_model_trajectories = {}
     for key in available_fault_models.keys():
-        fm_env = gym.make(env_name.replace('_', '-'), render_mode="human")
+        fm_env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
         fm_initial_obs, _ = fm_env.reset(seed=SEED)
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
@@ -108,7 +108,7 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, model_name, total_times
     print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_wfm\n========================================================================================\n')
 
     # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
     initial_obs, _ = env.reset(seed=SEED)
     print(f'initial observation: {initial_obs.tolist()}')
 
@@ -154,7 +154,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, model_name, total_times
     print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_sfm\n========================================================================================\n')
 
     # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
     initial_obs, _ = env.reset(seed=SEED)
     print(f'initial observation: {initial_obs.tolist()}')
 
@@ -170,7 +170,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, model_name, total_times
     # preparing the environments for each of the fault models
     fault_model_trajectories = {}
     for key in available_fault_models.keys():
-        fm_env = gym.make(env_name.replace('_', '-'), render_mode="human")
+        fm_env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
         fm_initial_obs, _ = fm_env.reset(seed=SEED)
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
