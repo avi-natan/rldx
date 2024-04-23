@@ -11,13 +11,13 @@ if __name__ == '__main__':
     # train_on_environment("ALE/AirRaid_v5", "PPO")
 
     ''' run_pipeline(env_name, model_name, total_timesteps, fault_model_generator_name, available_fault_models, execution_fault_model, diagnoser_name, observation_mask) '''
-    run_pipeline("LunarLander_v2", "PPO", 90000, "discrete",
-                 ["[0,1,2,3]",  # normal behavior
-                  "[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
-                  "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"],  # overworking jets
-                 "[0,0,2,3]",
-                 "diagnose_deterministic_faults_full_obs_wfm",
-                 [])
+    # run_pipeline("LunarLander_v2", "PPO", 90000, "discrete",
+    #              ["[0,1,2,3]",  # normal behavior
+    #               "[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
+    #               "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"],  # overworking jets
+    #              "[0,0,2,3]",
+    #              "diagnose_deterministic_faults_part_obs_sfm",
+    #              [-1])
     # run_pipeline("Ant_v4", "PPO", 90000, "box",
     #              ["[1,1,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # normal behaviour
     #               "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 1

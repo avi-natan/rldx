@@ -1,4 +1,5 @@
 import os
+import platform
 
 import gym
 
@@ -16,7 +17,10 @@ def train_on_environment(env_name, model_name):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    env = gym.make(env_name.replace('_', '-'), render_mode=os_compatible_render_mode())
+    if platform.system() == "Windows":
+        env = gym.make(env_name.replace('_', '-'), render_mode="human")
+    else:
+        env = gym.make(env_name.replace('_', '-'))
     env.reset()
 
     model = models[model_name]("MlpPolicy", env, verbose=1, tensorboard_log=log_dir)
