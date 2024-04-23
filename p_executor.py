@@ -1,21 +1,15 @@
-import platform
-
 import gym
 
-from h_common import os_compatible_render_mode
 from h_consts import EPISODES, DETERMINISTIC, SEED
 from h_fault_model_generator import FaultModelGeneratorDiscrete, same_box_action
 from h_rl_models import models
 
 
-def execute(env_name, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation):
+def execute(env_name, render_mode, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation):
     print(f'executing with fault model: {execution_fault_model_representation}\n========================================================================================\n')
 
     # initialize environment
-    if platform.system() == "Windows":
-        env = gym.make(env_name.replace('_', '-'), render_mode="human")
-    else:
-        env = gym.make(env_name.replace('_', '-'))
+    env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=SEED)
     print(f'initial observation: {initial_obs.tolist()}')
 

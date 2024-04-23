@@ -1,15 +1,23 @@
+import platform
+
 from h_common import output_trajectory_to_file
 from h_fault_model_generator_list import fault_model_generators
 from p_diagnoser import diagnosers
 from p_executor import execute
 
 
-def run_pipeline(env_name, model_name, total_timesteps, fault_model_generator_name, available_fault_model_representations, execution_fault_model_representation, diagnoser_name, observation_mask):
+def run_pipeline(env_name, render_display, render_terminal, model_name, total_timesteps, fault_model_generator_name, available_fault_model_representations, execution_fault_model_representation, diagnoser_name, observation_mask):
+    # determine the render mode
+    if platform.system() == "Windows":
+        render_mode = render_display
+    else:
+        render_mode = render_terminal
+
     # initialize fault model generator
     fault_model_generator = fault_model_generators[fault_model_generator_name]
 
     # execute to get observations
-    trajectory_execution = execute(env_name, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation)
+    trajectory_execution = execute(env_name, render_mode, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation)
     if len(trajectory_execution) % 2 != 1:
         trajectory_execution = trajectory_execution[:-1]
 
@@ -43,7 +51,7 @@ def run_pipeline(env_name, model_name, total_timesteps, fault_model_generator_na
 
     # use the diagnoser to diagnose
     diagnose = diagnosers[diagnoser_name]
-    output = diagnose(env_name, model_name, total_timesteps, lst_actions, lst_states, available_fault_models)
+    output = diagnose(env_name, render_mode, model_name, total_timesteps, lst_actions, lst_states, available_fault_models)
     for key in output.keys():
         print(f'{key}: {output[key]}')
     print(9)

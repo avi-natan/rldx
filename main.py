@@ -8,17 +8,19 @@ if __name__ == '__main__':
     fault_model_generators: discrete, box
     '''
 
-    # train_on_environment("ALE/AirRaid_v5", "PPO")
+    # train_on_environment("LunarLander_v2", "human", None, "PPO")
+    # train_on_environment("Ant_v4", "human", None, "PPO")
+    # train_on_environment("ALE/SpaceInvaders_v5", "human", "rgb_array", "PPO")
 
-    ''' run_pipeline(env_name, model_name, total_timesteps, fault_model_generator_name, available_fault_models, execution_fault_model, diagnoser_name, observation_mask) '''
-    # run_pipeline("LunarLander_v2", "PPO", 90000, "discrete",
+    ''' run_pipeline(env_name, render_display, render_terminal, model_name, total_timesteps, fault_model_generator_name, available_fault_model_representations, execution_fault_model_representation, diagnoser_name, observation_mask) '''
+    # run_pipeline("LunarLander_v2", "human", None, "PPO", 90000, "discrete",
     #              ["[0,1,2,3]",  # normal behavior
     #               "[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
     #               "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"],  # overworking jets
     #              "[0,0,2,3]",
     #              "diagnose_deterministic_faults_part_obs_sfm",
     #              [-1])
-    # run_pipeline("Ant_v4", "PPO", 90000, "box",
+    # run_pipeline("Ant_v4", "human", None, "PPO", 90000, "box",
     #              ["[1,1,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # normal behaviour
     #               "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 1
     #               "[1,1,0,0,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 2
@@ -29,7 +31,7 @@ if __name__ == '__main__':
     #              "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
     #              "diagnose_deterministic_faults_part_obs_sfm",
     #              [-1])
-    # run_pipeline("ALE/SpaceInvaders_v5", "PPO", 90000, "discrete",
+    # run_pipeline("ALE/SpaceInvaders_v5", "human", "rgb_array", "PPO", 90000, "discrete",
     #              ["[0,1,2,3,4,5]",  # normal behavior
     #               "[0,0,2,3,4,5]", "[0,1,0,3,4,5]", "[0,1,2,0,4,5]", "[0,1,2,3,0,5]", "[0,1,2,3,4,0]",  # shutting down 1 action
     #               "[0,0,0,3,4,5]", "[0,0,2,0,4,5]", "[0,0,2,3,0,5]", "[0,0,2,3,4,0]", "[0,1,0,0,4,5]",  # shutting down 2 actions
