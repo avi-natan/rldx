@@ -1,5 +1,5 @@
 import os
-
+import platform
 
 def output_trajectory_to_file(file_path_string, filename_string, trajectory_list):
     if not os.path.exists(file_path_string):
@@ -10,3 +10,11 @@ def output_trajectory_to_file(file_path_string, filename_string, trajectory_list
                 file.write(str(point) + '\n')
             else:
                 file.write(str(point.tolist()) + '\n')
+
+def os_compatible_render_mode():
+    system_platform = platform.system()
+
+    if system_platform == "Windows":
+        return "human"
+    else:
+        return None

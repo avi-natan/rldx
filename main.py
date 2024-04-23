@@ -16,8 +16,8 @@ if __name__ == '__main__':
                   "[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
                   "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"],  # overworking jets
                  "[0,0,2,3]",
-                 "diagnose_deterministic_faults_part_obs_sfm",
-                 [-1])
+                 "diagnose_deterministic_faults_full_obs_wfm",
+                 [])
     # run_pipeline("Ant_v4", "PPO", 90000, "box",
     #              ["[1,1,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # normal behaviour
     #               "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 1

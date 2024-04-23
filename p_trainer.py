@@ -2,7 +2,7 @@ import os
 
 import gym
 
-from h_consts import RENDER_MODE
+from h_common import os_compatible_render_mode
 from h_rl_models import models
 
 
@@ -16,7 +16,7 @@ def train_on_environment(env_name, model_name):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    env = gym.make(env_name.replace('_', '-'), render_mode=RENDER_MODE)
+    env = gym.make(env_name.replace('_', '-'), render_mode=os_compatible_render_mode())
     env.reset()
 
     model = models[model_name]("MlpPolicy", env, verbose=1, tensorboard_log=log_dir)
