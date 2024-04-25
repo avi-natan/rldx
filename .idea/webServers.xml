@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="a73e162e-49ba-412c-b667-6bb297f75819" name="rldx" url="http:///">
-        <fileTransfer accessType="SFTP" host="132.72.64.21" port="22" sshConfigId="ed5008cd-69d6-4a9f-8682-c98e6b4ffab3" sshConfig="natanavr@132.72.64.21:22 password">
+        <fileTransfer accessType="SFTP" host="132.72.64.151" port="22" sshConfigId="6dbaf726-5234-42c9-ad03-1f1a30b00511" sshConfig="natanavr@132.72.64.151:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

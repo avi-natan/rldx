@@ -3,22 +3,22 @@ import platform
 import numpy as np
 import gym
 
-from h_consts import SEED, DETERMINISTIC
+from h_consts import DETERMINISTIC
 from h_rl_models import models
 
 
-def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, model_name, total_timesteps, lst_actions, lst_states, available_fault_models):
+def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, ml_model_name, total_timesteps, lst_actions, lst_states, available_fault_models, instance_seed):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_wfm\n========================================================================================\n')
+    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_wfm\n========================================================================================')
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-    initial_obs, _ = env.reset(seed=SEED)
+    initial_obs, _ = env.reset(seed=instance_seed)
     print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
-    models_dir = f"environments/{env_name}/models/{model_name}"
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{total_timesteps}.zip"
-    model = models[model_name].load(model_path, env=env)
+    model = models[ml_model_name].load(model_path, env=env)
 
     # make sure the first state is the same in obs and simulation
     s_0, _ = env.reset()
@@ -29,7 +29,7 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, model_name
 
     # running the diagnosis loop
     for i in range(1, len(lst_states)):
-        print(f'{i}/{len(lst_states)}')
+        # print(f'{i}/{len(lst_states)}')
         a_i_gag, _ = model.predict(lst_states[i-1], deterministic=DETERMINISTIC)
         # a_i = lst_actions[i-1]
         # if a_i == a_i_gag:
@@ -49,18 +49,18 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, model_name
     }
     return output
 
-def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, model_name, total_timesteps, lst_actions, lst_states, available_fault_models):
+def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, ml_model_name, total_timesteps, lst_actions, lst_states, available_fault_models, instance_seed):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_sfm\n========================================================================================\n')
+    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_sfm\n========================================================================================')
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-    initial_obs, _ = env.reset(seed=SEED)
+    initial_obs, _ = env.reset(seed=instance_seed)
     print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
-    models_dir = f"environments/{env_name}/models/{model_name}"
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{total_timesteps}.zip"
-    model = models[model_name].load(model_path, env=env)
+    model = models[ml_model_name].load(model_path, env=env)
 
     # make sure the first state is the same in obs and simulation
     s_0, _ = env.reset()
@@ -70,7 +70,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, model_name
     fault_model_trajectories = {}
     for key in available_fault_models.keys():
         fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-        fm_initial_obs, _ = fm_env.reset(seed=SEED)
+        fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
 
@@ -79,7 +79,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, model_name
         a_i_gag, _ = model.predict(lst_states[i - 1], deterministic=DETERMINISTIC)
         irrelevant_keys = []
         for fm_i, fm in enumerate(fault_model_trajectories.keys()):
-            print(f'running {i}/{len(lst_states)}, fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())})')
+            # print(f'running {i}/{len(lst_states)}, fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())})')
             a_i_gag_fm = fault_model_trajectories[fm][0](a_i_gag)
             fault_model_trajectories[fm][2].append(a_i_gag_fm)
             s_i_gag_fm, reward, done, trunc, info = fault_model_trajectories[fm][1].step(a_i_gag_fm)
@@ -91,34 +91,37 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, model_name
             fault_model_trajectories.pop(fm)
 
     # finilizing the output
-    determined_fm = ""
+    determined_fms = []
     for key in fault_model_trajectories.keys():
-        determined_fm = key
-    determined_trajectory = []
-    for i in fault_model_trajectories[determined_fm][2]:
-        if isinstance(i, int):
-            determined_trajectory.append(i)
-        else:
-            determined_trajectory.append(list(i))
+        determined_fms.append(key)
+    determined_trajectories = []
+    for determined_fm in determined_fms:
+        determined_trajectory = []
+        for i in fault_model_trajectories[determined_fm][2]:
+            if isinstance(i, int):
+                determined_trajectory.append(i)
+            else:
+                determined_trajectory.append(list(i))
+        determined_trajectories.append(determined_trajectory)
     output = {
-        "fm": determined_fm,
-        "traj": determined_trajectory
+        "fm": determined_fms,
+        "traj": determined_trajectories
     }
     return output
 
-def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, model_name, total_timesteps, lst_actions, lst_states, available_fault_models):
+def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, ml_model_name, total_timesteps, lst_actions, lst_states, available_fault_models, instance_seed):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_wfm\n========================================================================================\n')
+    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_wfm\n========================================================================================')
 
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-    initial_obs, _ = env.reset(seed=SEED)
+    initial_obs, _ = env.reset(seed=instance_seed)
     print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
-    models_dir = f"environments/{env_name}/models/{model_name}"
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{total_timesteps}.zip"
-    model = models[model_name].load(model_path, env=env)
+    model = models[ml_model_name].load(model_path, env=env)
 
     # make sure the first state is the same in obs and simulation
     s_0, _ = env.reset()
@@ -130,7 +133,7 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, model_name
     # running the diagnosis loop
     s_i_gag = lst_states[0]
     for i in range(1, len(lst_states)):
-        print(f'{i}/{len(lst_states)}')
+        # print(f'{i}/{len(lst_states)}')
         a_i_gag, _ = model.predict(s_i_gag, deterministic=DETERMINISTIC)
         # a_i = lst_actions[i-1]
         # if a_i == a_i_gag:
@@ -152,19 +155,19 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, model_name
     }
     return output
 
-def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, model_name, total_timesteps, lst_actions, lst_states, available_fault_models):
+def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, ml_model_name, total_timesteps, lst_actions, lst_states, available_fault_models, instance_seed):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_sfm\n========================================================================================\n')
+    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_sfm\n========================================================================================')
 
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-    initial_obs, _ = env.reset(seed=SEED)
+    initial_obs, _ = env.reset(seed=instance_seed)
     print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
-    models_dir = f"environments/{env_name}/models/{model_name}"
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{total_timesteps}.zip"
-    model = models[model_name].load(model_path, env=env)
+    model = models[ml_model_name].load(model_path, env=env)
 
     # make sure the first state is the same in obs and simulation
     s_0, _ = env.reset()
@@ -174,7 +177,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, model_name
     fault_model_trajectories = {}
     for key in available_fault_models.keys():
         fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-        fm_initial_obs, _ = fm_env.reset(seed=SEED)
+        fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
 
@@ -182,7 +185,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, model_name
     for fm_i, fm in enumerate(fault_model_trajectories.keys()):
         s_fm = lst_states[0]
         for i in range(1, len(lst_states)):
-            print(f'running fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())}), {i}/{len(lst_states)}')
+            # print(f'running fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())}), {i}/{len(lst_states)}')
             a_i_gag, _ = model.predict(s_fm, deterministic=DETERMINISTIC)
             a_i_gag_fm = fault_model_trajectories[fm][0](a_i_gag)
             fault_model_trajectories[fm][2].append(a_i_gag_fm)
@@ -194,7 +197,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, model_name
     for fm_i, fm in enumerate(fault_model_trajectories.keys()):
         equal = True
         for i in range(len(lst_states)):
-            print(f'finilizing fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())}), {i}/{len(lst_states)}')
+            # print(f'finilizing fm {fm} ({fm_i}/{len(fault_model_trajectories.keys())}), {i}/{len(lst_states)}')
             s_lst_states = lst_states[i]
             s_trajectory_execution = fault_model_trajectories[fm][2][i*2]
             a = s_lst_states is not None
@@ -204,19 +207,22 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, model_name
                 equal = False
                 break
         equality_dict[fm] = equal
-    determined_fm = ""
+    determined_fms = []
     for key in equality_dict.keys():
         if equality_dict[key]:
-            determined_fm = key
-    determined_trajectory = []
-    for i in fault_model_trajectories[determined_fm][2]:
-        if isinstance(i, int):
-            determined_trajectory.append(i)
-        else:
-            determined_trajectory.append(list(i))
+            determined_fms.append(key)
+    determined_trajectories = []
+    for determined_fm in determined_fms:
+        determined_trajectory = []
+        for i in fault_model_trajectories[determined_fm][2]:
+            if isinstance(i, int):
+                determined_trajectory.append(i)
+            else:
+                determined_trajectory.append(list(i))
+        determined_trajectories.append(determined_trajectory)
     output = {
-        "fm": determined_fm,
-        "traj": determined_trajectory
+        "fm": determined_fms,
+        "traj": determined_trajectories
     }
     return output
 

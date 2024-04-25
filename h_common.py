@@ -1,5 +1,5 @@
+import json
 import os
-import platform
 
 def output_trajectory_to_file(file_path_string, filename_string, trajectory_list):
     if not os.path.exists(file_path_string):
@@ -10,3 +10,8 @@ def output_trajectory_to_file(file_path_string, filename_string, trajectory_list
                 file.write(str(point) + '\n')
             else:
                 file.write(str(point.tolist()) + '\n')
+
+def read_experimental_params(params_file):
+    with open(params_file, 'r') as file:
+        json_data = json.load(file)
+    return json_data
