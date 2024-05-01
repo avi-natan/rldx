@@ -1,4 +1,5 @@
 import platform
+import time
 
 import numpy as np
 import gym
@@ -13,7 +14,7 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, ml_model_n
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
-    print(f'initial observation: {initial_obs.tolist()}')
+    # print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
     models_dir = f"environments/{env_name}/models/{ml_model_name}"
@@ -27,6 +28,7 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, ml_model_n
     # determined faulty action
     determined_faulty_action_index = -1
 
+    start_time = time.time()
     # running the diagnosis loop
     for i in range(1, len(lst_states)):
         # print(f'{i}/{len(lst_states)}')
@@ -43,9 +45,14 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name, render_mode, ml_model_n
             break
         # else:
         #     print(f'[STATE  SAME] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
     output = {
         "i": determined_faulty_action_index,
-        "a_i": lst_actions[determined_faulty_action_index - 1]
+        "a_i": lst_actions[determined_faulty_action_index - 1],
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
     }
     return output
 
@@ -55,7 +62,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, ml_model_n
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
-    print(f'initial observation: {initial_obs.tolist()}')
+    # print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
     models_dir = f"environments/{env_name}/models/{ml_model_name}"
@@ -74,6 +81,7 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, ml_model_n
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
 
+    start_time = time.time()
     # running the diagnosis loop
     for i in range(1, len(lst_states)):
         a_i_gag, _ = model.predict(lst_states[i - 1], deterministic=DETERMINISTIC)
@@ -103,9 +111,14 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name, render_mode, ml_model_n
             else:
                 determined_trajectory.append(list(i))
         determined_trajectories.append(determined_trajectory)
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
     output = {
         "fm": determined_fms,
-        "traj": determined_trajectories
+        "traj": determined_trajectories,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
     }
     return output
 
@@ -116,7 +129,7 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, ml_model_n
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
-    print(f'initial observation: {initial_obs.tolist()}')
+    # print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
     models_dir = f"environments/{env_name}/models/{ml_model_name}"
@@ -130,6 +143,7 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, ml_model_n
     # determined range where fault occured
     fault_occurence_range = [0, None]
 
+    start_time = time.time()
     # running the diagnosis loop
     s_i_gag = lst_states[0]
     for i in range(1, len(lst_states)):
@@ -149,9 +163,13 @@ def diagnose_deterministic_faults_part_obs_wfm(env_name, render_mode, ml_model_n
                 #     print(f'[STATE  SAME] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
                 fault_occurence_range[1] = i
                 break
-
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
     output = {
-        "fault_occurence_range": fault_occurence_range
+        "fault_occurence_range": fault_occurence_range,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
     }
     return output
 
@@ -162,7 +180,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, ml_model_n
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
-    print(f'initial observation: {initial_obs.tolist()}')
+    # print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
     models_dir = f"environments/{env_name}/models/{ml_model_name}"
@@ -181,6 +199,7 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, ml_model_n
         fm_s_0, _ = fm_env.reset()
         fault_model_trajectories[key] = [available_fault_models[key], fm_env, [fm_s_0]]
 
+    start_time = time.time()
     # running the diagnosis loop
     for fm_i, fm in enumerate(fault_model_trajectories.keys()):
         s_fm = lst_states[0]
@@ -220,9 +239,14 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name, render_mode, ml_model_n
             else:
                 determined_trajectory.append(list(i))
         determined_trajectories.append(determined_trajectory)
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
     output = {
         "fm": determined_fms,
-        "traj": determined_trajectories
+        "traj": determined_trajectories,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
     }
     return output
 

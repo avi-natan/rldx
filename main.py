@@ -165,7 +165,8 @@ def run_experimental_setup(arguments):
                         # mask the states list
                         lst_states_masked = mask_states(lst_states, observation_mask)
                         for ip5, num_fault_models in enumerate(param_dict["ip5_num_fault_models"]):
-                            print(f"({total}) {pc + 1}/{ip1 + 1}/{ip2 + 1}/{ip3 + 1}/{ip4 + 1}/{ip5 + 1} "
+                            print(f"({total}/{len(param_dict['pc_fault_models']) * len(param_dict['ip1_instance_seed']) * len(param_dict['ip2_obs_percent_visible']) * len(param_dict['ip3_obs_percent_mean']) * len(param_dict['ip4_obs_percent_dev']) * len(param_dict['ip5_num_fault_models'])})"
+                                  f" {pc + 1}/{ip1 + 1}/{ip2 + 1}/{ip3 + 1}/{ip4 + 1}/{ip5 + 1} "
                                   f"fault_model: {fault_model}, instance_seed: {instance_seed}, obs_p_visible: {obs_p_visible}, obs_p_mean: {obs_p_mean}, obs_p_dev: {obs_p_dev}, num_fault_models: {num_fault_models}")
 
                             # prepare fault models
@@ -182,10 +183,10 @@ def run_experimental_setup(arguments):
                                               available_fault_models=fault_models,
                                               instance_seed=instance_seed)
 
-                            # print out the output
-                            for key in output.keys():
-                                print(f'{key}: {output[key]}')
-                            print("")
+                            # # print out the output
+                            # for key in output.keys():
+                            #     print(f'{key}: {output[key]}')
+                            # print("")
 
                             # register a database line
                             database_row = [
@@ -204,13 +205,25 @@ def run_experimental_setup(arguments):
                                 instance_seed,
                                 lst_actions if param_dict["c10_debug_print"] == 1 else "Omitted",
                                 lst_states if param_dict["c10_debug_print"] == 1 else "Omitted",
+                                len(lst_states),
                                 obs_p_visible,
                                 obs_p_mean,
                                 obs_p_dev,
                                 observation_mask if param_dict["c10_debug_print"] == 1 else "Omitted",
+                                lst_states_masked if param_dict["c10_debug_print"] == 1 else "Omitted",
+                                len([x for x in lst_states_masked if x is not None]),
+                                next((i for i, x in enumerate(lst_states_masked[1:], 1) if x is not None), None),
                                 num_fault_models,
                                 str(list(fault_models.keys())),
                                 json.dumps(output) if param_dict["c10_debug_print"] == 1 else "Omitted",
+                                output['i'] if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
+                                output['a_i'] if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
+                                str(output['fault_occurence_range']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_wfm' else "Irrelevant",
+                                str(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
+                                len(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
+                                len([mem for mem in output['fm'] if mem == fault_model]) * 1.0 / len(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
+                                output['runtime_sec'],
+                                output['runtime_ms']
                             ]
                             database.append(database_row)
 
@@ -234,18 +247,31 @@ def run_experimental_setup(arguments):
         {'header': 'ip1_instance_seed'},
         {'header': 'bpp_lst_actions'},
         {'header': 'bpp_lst_states'},
+        {'header': 'bpp_len_execution'},
         {'header': 'ip2_obs_percent_visible'},
         {'header': 'ip3_obs_percent_mean'},
         {'header': 'ip4_obs_percent_dev'},
         {'header': 'bpp_observation_mask'},
+        {'header': 'bpp_lst_states_masked'},
+        {'header': 'bpp_num_known_states'},
+        {'header': 'bpp_first_known_post_s0'},
         {'header': 'ip5_num_fault_models'},
         {'header': 'bpp_fault_models'},
-        {'header': 'dp1_output'}
+        {'header': 'dp1_output'},
+        {'header': 'dp2_alg1_index_first_failure'},
+        {'header': 'dp3_alg1_action_first_failure'},
+        {'header': 'dp4_alg3_fault_occurence_range'},
+        {'header': 'dp5_alg24_determined_fault_models'},
+        {'header': 'dp6_alg24_determined_fault_models_num'},
+        {'header': 'dp7_alg24_precision'},
+        {'header': 'dp8_algall_runtime_sec'},
+        {'header': 'dp8_algall_runtime_ms'}
     ]
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_file_name[:-5]}.xlsx")
     worksheet = workbook.add_worksheet('results')
     worksheet.add_table(0, 0, len(database), len(columns) - 1, {'data': database, 'columns': columns})
     workbook.close()
+    print(9)
 
 
 if __name__ == '__main__':
