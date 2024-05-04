@@ -31,7 +31,7 @@ def execute(env_name, render_mode, model_name, total_timesteps, fault_model_gene
         done = False
         exec_len = 0
         while not done and exec_len < max_exec_len:
-            env.render()
+            # env.render()
             trajectory.append(obs)
             # print(f'EP:{ep} a#:{action_number} [PREVOBS]: {obs.tolist()}')
             action, _ = model.predict(obs, deterministic=DETERMINISTIC)

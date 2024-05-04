@@ -217,7 +217,7 @@ def run_experimental_setup(arguments):
                                 str(list(fault_models.keys())),
                                 json.dumps(output) if param_dict["c10_debug_print"] == 1 else "Omitted",
                                 output['i'] if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
-                                output['a_i'] if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
+                                str(output['a_i']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
                                 str(output['fault_occurence_range']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_wfm' else "Irrelevant",
                                 str(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
                                 len(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
