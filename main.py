@@ -11,9 +11,11 @@ from h_fault_model_generator_list import fault_model_generators
 from p_diagnoser import diagnosers
 from p_executor import execute
 from p_trainer import train_on_environment
+
+
 # from pipeline import run_pipeline
 
-def run_single_experiment(env_name, render_display, render_terminal, ml_model_name, total_timesteps, action_type, diagnoser, fault_model, max_exec_len, debug_print,
+def run_single_experiment(env_name, render_display, render_terminal, ml_model_name, total_timesteps, action_type, diagnoser, fault_model, max_exec_len, debug_print, fault_model_type,
                           fault_model_names,
                           instance_seed, obs_percent_visible, obs_percent_mean, obs_percent_dev):
     # determine the render mode
@@ -21,7 +23,7 @@ def run_single_experiment(env_name, render_display, render_terminal, ml_model_na
     # initialize fault model generator
     fault_model_generator = fault_model_generators[action_type]
     # execute to get trajectory
-    trajectory_execution = execute_trajectory(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed)
+    trajectory_execution, faulty_actions_indices = execute_trajectory(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed, fault_model_type)
     # separating trajectory to actions and states
     lst_actions, lst_states = separate_trajectory(trajectory_execution)
     # generate observation mask
@@ -44,8 +46,10 @@ def run_single_experiment(env_name, render_display, render_terminal, ml_model_na
                       lst_states=lst_states_masked,
                       available_fault_models=fault_models,
                       instance_seed=instance_seed)
+    print(f'faulty_actions_indices: {faulty_actions_indices}')
     for key in output.keys():
         print(f'{key}: {output[key]}')
+
 
 # determine the render mode
 def determine_render_mode(render_display, render_terminal):
@@ -56,11 +60,11 @@ def determine_render_mode(render_display, render_terminal):
 
 
 # execute to get trajectory
-def execute_trajectory(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed):
-    trajectory_execution = execute(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed)
+def execute_trajectory(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed, fault_model_type):
+    trajectory_execution, faulty_actions_indices = execute(env_name, render_mode, ml_model_name, total_timesteps, fault_model_generator, fault_model, max_exec_len, instance_seed, fault_model_type)
     if len(trajectory_execution) % 2 != 1:
         trajectory_execution = trajectory_execution[:-1]
-    return trajectory_execution
+    return trajectory_execution, faulty_actions_indices
 
 
 # separating trajectory to actions and states
@@ -154,7 +158,7 @@ def run_experimental_setup(arguments):
             # initialize fault model generator
             fault_model_generator = fault_model_generators[param_dict["c6_action_type"]]
             # execute to get trajectory
-            trajectory_execution = execute_trajectory(param_dict["c1_env_name"], render_mode, param_dict["c4_ml_model_name"], param_dict["c5_total_timesteps"], fault_model_generator, fault_model, param_dict["c9_max_exec_len"], instance_seed)
+            trajectory_execution, faulty_actions_indices = execute_trajectory(param_dict["c1_env_name"], render_mode, param_dict["c4_ml_model_name"], param_dict["c5_total_timesteps"], fault_model_generator, fault_model, param_dict["c9_max_exec_len"], instance_seed, param_dict["c11_fault_model_type"])
             # separating trajectory to actions and states
             lst_actions, lst_states = separate_trajectory(trajectory_execution)
             for ip2, obs_p_visible in enumerate(param_dict["ip2_obs_percent_visible"]):
@@ -184,6 +188,9 @@ def run_experimental_setup(arguments):
                                               instance_seed=instance_seed)
 
                             # # print out the output
+                            print(f'faulty_actions_indices: {faulty_actions_indices}')
+                            print(f'fm: {output["fm"]}')
+                            print(f'pof: {output["pof"]}')
                             # for key in output.keys():
                             #     print(f'{key}: {output[key]}')
                             # print("")
@@ -288,16 +295,17 @@ if __name__ == '__main__':
     # ================== single experiments ==================
     ''' run_pipeline(env_name, render_display, render_terminal, ml_model_name, total_timesteps, action_type, diagnoser, fault_models, fault_model, observation_mask) '''
     '''
-    run_single_experiment(env_name, render_display, render_terminal, ml_model_name, total_timesteps, action_type, diagnoser, fault_model, max_exec_len, debug_print,
+    run_single_experiment(env_name, render_display, render_terminal, ml_model_name, total_timesteps, action_type, diagnoser, fault_model, max_exec_len, debug_print, fault_model_type
                           fault_model_names,
                           instance_seed, obs_percent_visible, obs_percent_mean, obs_percent_dev)
     '''
-    # run_single_experiment("LunarLander_v2", "human", "rgb_array", "PPO", 90000, "discrete", "diagnose_deterministic_faults_full_obs_wfm", "[0,0,2,3]", 3000, 0,
+    # ###################### deterministic fault models
+    # run_single_experiment("LunarLander_v2", "human", "rgb_array", "PPO", 90000, "discrete", "diagnose_deterministic_faults_full_obs_wfm", "[0,0,2,3]", 3000, 0, "deterministic",
     #                       ["[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
     #                        "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"  # overworking jets
     #                        ],
     #                       42, 100, 50, 100)
-    # run_single_experiment("Ant_v4", "human", "rgb_array", "PPO", 90000, "box", "diagnose_deterministic_faults_full_obs_wfm", "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1", 3000, 0,
+    # run_single_experiment("Ant_v4", "human", "rgb_array", "PPO", 90000, "box", "diagnose_deterministic_faults_full_obs_wfm", "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1", 3000, 0, "deterministic",
     #                       ["[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 1
     #                        "[1,1,0,0,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 2
     #                        "[1,1,1,1,0,0,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 3
@@ -310,7 +318,37 @@ if __name__ == '__main__':
     #                        "[1,1,1,1,1,1,1,1];[0,0,0.5,0.5,0,0,0,0];-1;1",  # restraining leg 2
     #                        ],
     #                       42, 100, 50, 100)
-    # run_single_experiment("ALE/SpaceInvaders_v5", "human", "rgb_array", "PPO", 90000, "discrete", "diagnose_deterministic_faults_full_obs_wfm", "[0,1,2,0,4,0]", 3000, 0,
+    # run_single_experiment("ALE/SpaceInvaders_v5", "human", "rgb_array", "PPO", 90000, "discrete", "diagnose_deterministic_faults_full_obs_wfm", "[0,1,2,0,4,0]", 3000, 0, "deterministic",
+    #                       ["[0,0,2,3,4,5]", "[0,1,0,3,4,5]", "[0,1,2,0,4,5]", "[0,1,2,3,0,5]", "[0,1,2,3,4,0]",  # shutting down 1 action
+    #                        "[0,0,0,3,4,5]", "[0,0,2,0,4,5]", "[0,0,2,3,0,5]", "[0,0,2,3,4,0]", "[0,1,0,0,4,5]",  # shutting down 2 actions
+    #                        "[0,1,0,3,0,5]", "[0,1,0,3,4,0]", "[0,1,2,0,0,5]", "[0,1,2,0,4,0]", "[0,1,2,3,0,0]",
+    #                        "[0,0,0,0,4,5]", "[0,0,0,3,0,5]", "[0,0,0,3,4,0]", "[0,0,2,0,0,5]", "[0,0,2,0,4,0]",  # shutting down 3 actions
+    #                        "[0,0,2,3,0,0]", "[0,1,0,0,0,5]", "[0,1,0,0,4,0]", "[0,1,0,3,0,0]", "[0,1,2,0,0,0]",
+    #                        "[0,0,0,0,0,5]", "[0,0,0,0,4,0]", "[0,0,0,3,0,0]", "[0,0,2,0,0,0]", "[0,1,0,0,0,0]",  # shutting down 4 actions
+    #                        "[0,0,0,0,0,0]",  # shutting down 5 actions
+    #                        "[0,2,1,3,4,5]"  # swapping fire for going right
+    #                        ],
+    #                       42, 100, 50, 100)
+    # ###################### stochastic fault models
+    # run_single_experiment("LunarLander_v2", "rgb_array", "rgb_array", "PPO", 90000, "discrete", "sfm_stofm_fobs_brute", "[0,0,2,3]", 300, 0, "stochastic",
+    #                       ["[0,0,2,3]", "[0,1,0,3]", "[0,1,2,0]", "[0,0,0,3]", "[0,0,2,0]", "[0,1,0,0]", "[0,0,0,0]",  # shutting down jets
+    #                        "[1,1,2,3]", "[2,1,2,3]", "[3,1,2,3]"  # overworking jets
+    #                        ],
+    #                       42, 100, 50, 100)
+    # run_single_experiment("Ant_v4", "human", "rgb_array", "PPO", 90000, "box", "diagnose_deterministic_faults_full_obs_wfm", "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1", 3000, 0, "stochastic",
+    #                       ["[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 1
+    #                        "[1,1,0,0,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 2
+    #                        "[1,1,1,1,0,0,1,1];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 3
+    #                        "[1,1,1,1,1,1,0,0];[0,0,0,0,0,0,0,0];-1;1",  # shut down leg 4
+    #                        "[-1,-1,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # inverting leg 1
+    #                        "[1,1,-1,-1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # inverting leg 2
+    #                        "[1,1,1,1,-1,-1,1,1];[0,0,0,0,0,0,0,0];-1;1",  # inverting leg 3
+    #                        "[1,1,1,1,1,1,-1,-1];[0,0,0,0,0,0,0,0];-1;1",  # inverting leg 4
+    #                        "[1,1,1,1,1,1,1,1];[0.5,0.5,0,0,0,0,0,0];-1;1",  # restraining leg 1
+    #                        "[1,1,1,1,1,1,1,1];[0,0,0.5,0.5,0,0,0,0];-1;1",  # restraining leg 2
+    #                        ],
+    #                       42, 100, 50, 100)
+    # run_single_experiment("ALE/SpaceInvaders_v5", "human", "rgb_array", "PPO", 90000, "discrete", "diagnose_deterministic_faults_full_obs_wfm", "[0,1,2,0,4,0]", 3000, 0, "stochastic",
     #                       ["[0,0,2,3,4,5]", "[0,1,0,3,4,5]", "[0,1,2,0,4,5]", "[0,1,2,3,0,5]", "[0,1,2,3,4,0]",  # shutting down 1 action
     #                        "[0,0,0,3,4,5]", "[0,0,2,0,4,5]", "[0,0,2,3,0,5]", "[0,0,2,3,4,0]", "[0,1,0,0,4,5]",  # shutting down 2 actions
     #                        "[0,1,0,3,0,5]", "[0,1,0,3,4,0]", "[0,1,2,0,0,5]", "[0,1,2,0,4,0]", "[0,1,2,3,0,0]",

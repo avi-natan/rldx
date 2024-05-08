@@ -1,3 +1,5 @@
+import random
+
 import gym
 
 from h_consts import EPISODES, DETERMINISTIC
@@ -5,7 +7,7 @@ from h_fault_model_generator import FaultModelGeneratorDiscrete, same_box_action
 from h_rl_models import models
 
 
-def execute(env_name, render_mode, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation, max_exec_len, instance_seed):
+def execute(env_name, render_mode, model_name, total_timesteps, fault_model_generator, execution_fault_model_representation, max_exec_len, instance_seed, fault_model_type):
     print(f'executing with fault model: {execution_fault_model_representation}\n========================================================================================')
 
     # initialize environment
@@ -25,7 +27,8 @@ def execute(env_name, render_mode, model_name, total_timesteps, fault_model_gene
     trajectory = []
 
     episodes = EPISODES
-    action_number = 0
+    action_number = 1
+    faulty_actions_indices = []
     for ep in range(episodes):
         obs, _ = env.reset()
         done = False
@@ -39,7 +42,25 @@ def execute(env_name, render_mode, model_name, total_timesteps, fault_model_gene
                 trajectory.append(int(action))
             else:
                 trajectory.append(action)
-            faulty_action = execution_fault_model(action)
+            if fault_model_type == "deterministic":
+                faulty_action = execution_fault_model(action)
+                if isinstance(fault_model_generator, FaultModelGeneratorDiscrete):
+                    if faulty_action != action:
+                        faulty_actions_indices.append(action_number)
+                else:
+                    if not same_box_action(action, faulty_action):
+                        faulty_actions_indices.append(action_number)
+            else:
+                if random.random() < 0.5:
+                    faulty_action = execution_fault_model(action)
+                else:
+                    faulty_action = action
+                if isinstance(fault_model_generator, FaultModelGeneratorDiscrete):
+                    if faulty_action != action:
+                        faulty_actions_indices.append(action_number)
+                else:
+                    if not same_box_action(action, faulty_action):
+                        faulty_actions_indices.append(action_number)
             # if isinstance(fault_model_generator, FaultModelGeneratorDiscrete):
             #     if action != faulty_action:
             #         print(f'EP:{ep} a#:{action_number} [FAILURE] - planned: {action}, actual: {faulty_action}\n')
@@ -56,4 +77,4 @@ def execute(env_name, render_mode, model_name, total_timesteps, fault_model_gene
 
     env.close()
 
-    return trajectory
+    return trajectory, faulty_actions_indices
