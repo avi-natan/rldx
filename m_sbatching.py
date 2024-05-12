@@ -14,7 +14,7 @@ def submit_job(filename):
         f.write(f'#SBATCH --partition main			### specify partition name where to run a job. short: 7 days limit; gtx1080: 7 days; debug: 2 hours limit and 1 job at a time\n')
         f.write(f'#SBATCH --time 6-23:30:00			### limit the time of job running. Make sure it is not greater than the partition time limit!! Format: D-H:MM:SS\n')
         f.write(f'#SBATCH --job-name {filename}			### name of the job\n')
-        f.write(f'#SBATCH --output {filename}-job-%J.out			### output log for running job - %J for job number\n')
+        f.write(f'#SBATCH --output logs/{filename}-job-%J.out			### output log for running job - %J for job number\n')
         f.write(f'#SBATCH --ntasks=1\n')
         f.write(f'#SBATCH --cpus-per-task=4\n')
         f.write(f'#SBATCH -D /home/natanavr/natanavr/rldx\n')

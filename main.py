@@ -111,7 +111,7 @@ def execute_trajectory(env_name,
                                                            fault_model,
                                                            fault_probability)
     if len(trajectory_execution) % 2 != 1:
-        if faulty_actions_indices[-1] * 2 == len(trajectory_execution):
+        if len(faulty_actions_indices) > 0 and faulty_actions_indices[-1] * 2 == len(trajectory_execution):
             trajectory_execution = trajectory_execution[:-1]
             faulty_actions_indices = faulty_actions_indices[:-1]
         else:
