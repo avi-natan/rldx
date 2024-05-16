@@ -500,16 +500,18 @@ def sfm_stofm_fobs_sample(env_name,
             Tj_gag.append(t_j_i)
         Tj_gags[fm] = Tj_gag
     simis = {}
+    lst_states_flat = [s.flatten() for s in lst_states]
     for fm_j, fm in enumerate(fault_models.keys()):
         simis_j = []
         for i in range(sample_size):
             t_j_i_states = [s for s_i, s in enumerate(Tj_gags[fm][i]) if s_i % 2 == 0]
+            t_j_i_states_flat = [s.flatten() for s in t_j_i_states]
             # similarity
             simi_j_i = 0.0
-            for r in range(len(t_j_i_states)):
-                dot_st = sum(a * b for a, b in zip(lst_states[r], t_j_i_states[r]))
-                dot_ss = sum(a * b for a, b in zip(lst_states[r], lst_states[r]))
-                dot_tt = sum(a * b for a, b in zip(t_j_i_states[r], t_j_i_states[r]))
+            for r in range(len(t_j_i_states_flat)):
+                dot_st = sum(a * b for a, b in zip(lst_states_flat[r], t_j_i_states_flat[r]))
+                dot_ss = sum(a * b for a, b in zip(lst_states_flat[r], lst_states_flat[r]))
+                dot_tt = sum(a * b for a, b in zip(t_j_i_states_flat[r], t_j_i_states_flat[r]))
                 simi_j_i_r = dot_st / ((dot_ss ** .5) * (dot_tt ** .5))
                 simi_j_i += simi_j_i_r
             simis_j.append(simi_j_i)
