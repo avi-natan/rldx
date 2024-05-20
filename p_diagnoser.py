@@ -10,19 +10,19 @@ from h_consts import DETERMINISTIC
 from h_rl_models import models
 
 
-def diagnose_deterministic_faults_full_obs_wfm(env_name,
-                                               render_mode,
-                                               ml_model_name,
-                                               total_timesteps,
-                                               fault_model,
-                                               lst_actions,
-                                               lst_states,
-                                               fault_probability,
-                                               instance_seed,
-                                               fault_models,
-                                               sample_size):
+def DWF(env_name,
+        render_mode,
+        ml_model_name,
+        total_timesteps,
+        fault_model,
+        lst_actions,
+        lst_states,
+        fault_probability,
+        instance_seed,
+        fault_models,
+        sample_size):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_wfm\n========================================================================================')
+    print(f'diagnosing with diagnoser: DWF\n========================================================================================')
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
@@ -69,19 +69,81 @@ def diagnose_deterministic_faults_full_obs_wfm(env_name,
     return output
 
 
-def diagnose_deterministic_faults_full_obs_sfm(env_name,
-                                               render_mode,
-                                               ml_model_name,
-                                               total_timesteps,
-                                               fault_model,
-                                               lst_actions,
-                                               lst_states,
-                                               fault_probability,
-                                               instance_seed,
-                                               fault_models,
-                                               sample_size):
+def DWP(env_name,
+        render_mode,
+        ml_model_name,
+        total_timesteps,
+        fault_model,
+        lst_actions,
+        lst_states,
+        fault_probability,
+        instance_seed,
+        fault_models,
+        sample_size):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_full_obs_sfm\n========================================================================================')
+    print(f'diagnosing with diagnoser: DWP\n========================================================================================')
+
+    # initialize environment
+    env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
+    initial_obs, _ = env.reset(seed=instance_seed)
+    # print(f'initial observation: {initial_obs.tolist()}')
+
+    # load trained model
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
+    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model = models[ml_model_name].load(model_path, env=env)
+
+    # make sure the first state is the same in obs and simulation
+    s_0, _ = env.reset()
+    assert s_0.all() == lst_states[0].all()
+
+    # determined range where fault occured
+    fault_occurence_range = [0, None]
+
+    start_time = time.time()
+    # running the diagnosis loop
+    s_i_gag = lst_states[0]
+    for i in range(1, len(lst_states)):
+        # print(f'{i}/{len(lst_states)}')
+        a_i_gag, _ = model.predict(s_i_gag, deterministic=DETERMINISTIC)
+        # a_i = lst_actions[i-1]
+        # if a_i == a_i_gag:
+        #     print(f'[ACTION SAME] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
+        # else:
+        #     print(f'[ACTION DIFF] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
+        s_i_gag, reward, done, trunc, info = env.step(a_i_gag)
+        if lst_states[i] is not None:
+            if np.array_equal(lst_states[i], s_i_gag):
+                # print(f'[STATE  DIFF] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
+                fault_occurence_range[0] = i
+            else:
+                #     print(f'[STATE  SAME] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
+                fault_occurence_range[1] = i
+                break
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
+    output = {
+        "fault_occurence_range": fault_occurence_range,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
+    }
+    return output
+
+
+def DSF(env_name,
+        render_mode,
+        ml_model_name,
+        total_timesteps,
+        fault_model,
+        lst_actions,
+        lst_states,
+        fault_probability,
+        instance_seed,
+        fault_models,
+        sample_size):
+    # welcome message
+    print(f'diagnosing with diagnoser: DSF\n========================================================================================')
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
@@ -146,81 +208,19 @@ def diagnose_deterministic_faults_full_obs_sfm(env_name,
     return output
 
 
-def diagnose_deterministic_faults_part_obs_wfm(env_name,
-                                               render_mode,
-                                               ml_model_name,
-                                               total_timesteps,
-                                               fault_model,
-                                               lst_actions,
-                                               lst_states,
-                                               fault_probability,
-                                               instance_seed,
-                                               fault_models,
-                                               sample_size):
+def DSP(env_name,
+        render_mode,
+        ml_model_name,
+        total_timesteps,
+        fault_model,
+        lst_actions,
+        lst_states,
+        fault_probability,
+        instance_seed,
+        fault_models,
+        sample_size):
     # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_wfm\n========================================================================================')
-
-    # initialize environment
-    env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-    initial_obs, _ = env.reset(seed=instance_seed)
-    # print(f'initial observation: {initial_obs.tolist()}')
-
-    # load trained model
-    models_dir = f"environments/{env_name}/models/{ml_model_name}"
-    model_path = f"{models_dir}/{total_timesteps}.zip"
-    model = models[ml_model_name].load(model_path, env=env)
-
-    # make sure the first state is the same in obs and simulation
-    s_0, _ = env.reset()
-    assert s_0.all() == lst_states[0].all()
-
-    # determined range where fault occured
-    fault_occurence_range = [0, None]
-
-    start_time = time.time()
-    # running the diagnosis loop
-    s_i_gag = lst_states[0]
-    for i in range(1, len(lst_states)):
-        # print(f'{i}/{len(lst_states)}')
-        a_i_gag, _ = model.predict(s_i_gag, deterministic=DETERMINISTIC)
-        # a_i = lst_actions[i-1]
-        # if a_i == a_i_gag:
-        #     print(f'[ACTION SAME] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
-        # else:
-        #     print(f'[ACTION DIFF] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
-        s_i_gag, reward, done, trunc, info = env.step(a_i_gag)
-        if lst_states[i] is not None:
-            if np.array_equal(lst_states[i], s_i_gag):
-                # print(f'[STATE  DIFF] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
-                fault_occurence_range[0] = i
-            else:
-                #     print(f'[STATE  SAME] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
-                fault_occurence_range[1] = i
-                break
-    end_time = time.time()
-    elapsed_time_sec = end_time - start_time
-    elapsed_time_ms = elapsed_time_sec * 1000
-    output = {
-        "fault_occurence_range": fault_occurence_range,
-        "runtime_sec": elapsed_time_sec,
-        "runtime_ms": elapsed_time_ms
-    }
-    return output
-
-
-def diagnose_deterministic_faults_part_obs_sfm(env_name,
-                                               render_mode,
-                                               ml_model_name,
-                                               total_timesteps,
-                                               fault_model,
-                                               lst_actions,
-                                               lst_states,
-                                               fault_probability,
-                                               instance_seed,
-                                               fault_models,
-                                               sample_size):
-    # welcome message
-    print(f'diagnosing with diagnoser: diagnose_deterministic_faults_part_obs_sfm\n========================================================================================')
+    print(f'diagnosing with diagnoser: DSP\n========================================================================================')
 
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
@@ -296,19 +296,121 @@ def diagnose_deterministic_faults_part_obs_sfm(env_name,
     return output
 
 
-def sfm_stofm_fobs_partical(env_name,
-                            render_mode,
-                            ml_model_name,
-                            total_timesteps,
-                            fault_model,
-                            lst_actions,
-                            lst_states,
-                            fault_probability,
-                            instance_seed,
-                            fault_models,
-                            sample_size):
+def SSF_SMP(env_name,
+            render_mode,
+            ml_model_name,
+            total_timesteps,
+            fault_model,
+            lst_actions,
+            lst_states,
+            fault_probability,
+            instance_seed,
+            fault_models,
+            sample_size):
     # welcome message
-    print(f'diagnosing with diagnoser: sfm_stofm_fobs_partical\n========================================================================================')
+    print(f'diagnosing with diagnoser: SSF_SMP\n========================================================================================')
+    # initialize environment
+    env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
+    initial_obs, _ = env.reset(seed=instance_seed)
+    # print(f'initial observation: {initial_obs.tolist()}')
+
+    # load trained model
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
+    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model = models[ml_model_name].load(model_path, env=env)
+
+    # make sure the first state is the same in obs and simulation
+    s_0, _ = env.reset()
+    assert s_0.all() == lst_states[0].all()
+
+    # preparing the environments for each of the fault models
+    fault_model_trajectories = {}
+    for key in fault_models.keys():
+        fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
+        fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
+        fm_s_0, _ = fm_env.reset()
+        fault_model_trajectories[key] = [fault_models[key], fm_env, [fm_s_0], []]
+
+    start_time = time.time()
+    # running the diagnosis loop
+    Tj_gags = {}
+    for fm_j, fm in enumerate(fault_models.keys()):
+        Tj_gag = []
+        for i in range(sample_size):
+            # print(f'{fm_j}/{i}')
+            fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
+            fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
+            fm_s_0, _ = fm_env.reset()
+            t_j_i = [fm_s_0]
+            S_r_minus_1 = fm_s_0
+            for r in range(1, len(lst_states)):
+                if random.random() < fault_probability:
+                    a_r, _ = model.predict(S_r_minus_1, deterministic=DETERMINISTIC)
+                    a_r = fault_models[fm](a_r)
+                else:
+                    a_r, _ = model.predict(S_r_minus_1, deterministic=DETERMINISTIC)
+                t_j_i.append(a_r)
+                S_r, reward, done, trunc, info = fm_env.step(a_r)
+                t_j_i.append(S_r)
+                S_r_minus_1 = S_r
+            Tj_gag.append(t_j_i)
+        Tj_gags[fm] = Tj_gag
+    simis = {}
+    lst_states_flat = [s.flatten() for s in lst_states]
+    for fm_j, fm in enumerate(fault_models.keys()):
+        simis_j = []
+        for i in range(sample_size):
+            t_j_i_states = [s for s_i, s in enumerate(Tj_gags[fm][i]) if s_i % 2 == 0]
+            t_j_i_states_flat = [s.flatten() for s in t_j_i_states]
+            # similarity
+            simi_j_i = 0.0
+            for r in range(len(t_j_i_states_flat)):
+                dot_st = sum(a * b for a, b in zip(lst_states_flat[r], t_j_i_states_flat[r]))
+                dot_ss = sum(a * b for a, b in zip(lst_states_flat[r], lst_states_flat[r]))
+                dot_tt = sum(a * b for a, b in zip(t_j_i_states_flat[r], t_j_i_states_flat[r]))
+                simi_j_i_r = dot_st / ((dot_ss ** .5) * (dot_tt ** .5))
+                simi_j_i += simi_j_i_r
+            simis_j.append(simi_j_i)
+        simis[fm] = simis_j
+    scores = {}
+    for fm_j, fm in enumerate(fault_models.keys()):
+        score_j = sum(simis[fm]) / len(simis[fm])
+        scores[fm] = score_j
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
+
+    # finilizing the output
+    sorted_zipped_lists = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    determined_fms, ranks = zip(*sorted_zipped_lists)
+
+    try:
+        fm_rank = determined_fms.index(fault_model)
+    except ValueError:
+        fm_rank = len(determined_fms)
+    output = {
+        "fm": determined_fms,
+        "fm_rank": fm_rank,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
+    }
+
+    return output
+
+
+def SSF_PF(env_name,
+           render_mode,
+           ml_model_name,
+           total_timesteps,
+           fault_model,
+           lst_actions,
+           lst_states,
+           fault_probability,
+           instance_seed,
+           fault_models,
+           sample_size):
+    # welcome message
+    print(f'diagnosing with diagnoser: SSF_PF\n========================================================================================')
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
@@ -440,19 +542,95 @@ def sfm_stofm_fobs_partical(env_name,
     return output
 
 
-def sfm_stofm_fobs_sample(env_name,
-                          render_mode,
-                          ml_model_name,
-                          total_timesteps,
-                          fault_model,
-                          lst_actions,
-                          lst_states,
-                          fault_probability,
-                          instance_seed,
-                          fault_models,
-                          sample_size):
+'''
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+###########################################################################################################################################
+'''
+
+
+def W(env_name,
+      render_mode,
+      ml_model_name,
+      total_timesteps,
+      fault_model,
+      lst_actions,
+      lst_states,
+      fault_probability,
+      instance_seed,
+      fault_models,
+      sample_size):
     # welcome message
-    print(f'diagnosing with diagnoser: sfm_stofm_fobs_sample\n========================================================================================')
+    print(f'diagnosing with diagnoser: W\n========================================================================================')
+
+    # initialize environment
+    env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
+    initial_obs, _ = env.reset(seed=instance_seed)
+    # print(f'initial observation: {initial_obs.tolist()}')
+
+    # load trained model
+    models_dir = f"environments/{env_name}/models/{ml_model_name}"
+    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model = models[ml_model_name].load(model_path, env=env)
+
+    # make sure the first state is the same in obs and simulation
+    s_0, _ = env.reset()
+    assert s_0.all() == lst_states[0].all()
+
+    # determined range where fault occured
+    fault_occurence_range = [0, None]
+
+    start_time = time.time()
+    # running the diagnosis loop
+    s_i_gag = lst_states[0]
+    for i in range(1, len(lst_states)):
+        # print(f'{i}/{len(lst_states)}')
+        a_i_gag, _ = model.predict(s_i_gag, deterministic=DETERMINISTIC)
+        # a_i = lst_actions[i-1]
+        # if a_i == a_i_gag:
+        #     print(f'[ACTION SAME] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
+        # else:
+        #     print(f'[ACTION DIFF] a_{i}: {a_i}, a_{i}_gag: {a_i_gag}')
+        s_i_gag, reward, done, trunc, info = env.step(a_i_gag)
+        if lst_states[i] is not None:
+            if np.array_equal(lst_states[i], s_i_gag):
+                # print(f'[STATE  DIFF] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
+                fault_occurence_range[0] = i
+            else:
+                #     print(f'[STATE  SAME] s_{i}: {list(lst_states[i])}, s_{i}_gag: {list(s_i_gag)}')
+                fault_occurence_range[1] = i
+                break
+    end_time = time.time()
+    elapsed_time_sec = end_time - start_time
+    elapsed_time_ms = elapsed_time_sec * 1000
+    output = {
+        "fault_occurence_range": fault_occurence_range,
+        "runtime_sec": elapsed_time_sec,
+        "runtime_ms": elapsed_time_ms
+    }
+    return output
+
+
+def SD(env_name,
+       render_mode,
+       ml_model_name,
+       total_timesteps,
+       fault_model,
+       lst_actions,
+       lst_states,
+       fault_probability,
+       instance_seed,
+       fault_models,
+       sample_size):
+    # welcome message
+    print(f'diagnosing with diagnoser: SD\n========================================================================================')
+
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
@@ -473,81 +651,50 @@ def sfm_stofm_fobs_sample(env_name,
         fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
         fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
         fm_s_0, _ = fm_env.reset()
-        fault_model_trajectories[key] = [fault_models[key], fm_env, [fm_s_0], []]
+        fault_model_trajectories[key] = [fault_models[key], fm_env, [fm_s_0]]
 
     start_time = time.time()
     # running the diagnosis loop
-    Tj_gags = {}
-    for fm_j, fm in enumerate(fault_models.keys()):
-        Tj_gag = []
-        for i in range(sample_size):
-            # print(f'{fm_j}/{i}')
-            fm_env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
-            fm_initial_obs, _ = fm_env.reset(seed=instance_seed)
-            fm_s_0, _ = fm_env.reset()
-            t_j_i = [fm_s_0]
-            S_r_minus_1 = fm_s_0
-            for r in range(1, len(lst_states)):
-                if random.random() < fault_probability:
-                    a_r, _ = model.predict(S_r_minus_1, deterministic=DETERMINISTIC)
-                    a_r = fault_models[fm](a_r)
-                else:
-                    a_r, _ = model.predict(S_r_minus_1, deterministic=DETERMINISTIC)
-                t_j_i.append(a_r)
-                S_r, reward, done, trunc, info = fm_env.step(a_r)
-                t_j_i.append(S_r)
-                S_r_minus_1 = S_r
-            Tj_gag.append(t_j_i)
-        Tj_gags[fm] = Tj_gag
-    simis = {}
-    lst_states_flat = [s.flatten() for s in lst_states]
-    for fm_j, fm in enumerate(fault_models.keys()):
-        simis_j = []
-        for i in range(sample_size):
-            t_j_i_states = [s for s_i, s in enumerate(Tj_gags[fm][i]) if s_i % 2 == 0]
-            t_j_i_states_flat = [s.flatten() for s in t_j_i_states]
-            # similarity
-            simi_j_i = 0.0
-            for r in range(len(t_j_i_states_flat)):
-                dot_st = sum(a * b for a, b in zip(lst_states_flat[r], t_j_i_states_flat[r]))
-                dot_ss = sum(a * b for a, b in zip(lst_states_flat[r], lst_states_flat[r]))
-                dot_tt = sum(a * b for a, b in zip(t_j_i_states_flat[r], t_j_i_states_flat[r]))
-                simi_j_i_r = dot_st / ((dot_ss ** .5) * (dot_tt ** .5))
-                simi_j_i += simi_j_i_r
-            simis_j.append(simi_j_i)
-        simis[fm] = simis_j
-    scores = {}
-    for fm_j, fm in enumerate(fault_models.keys()):
-        score_j = sum(simis[fm]) / len(simis[fm])
-        scores[fm] = score_j
+    for i in range(1, len(lst_states)):
+        irrelevant_keys = []
+        for fm_i, fm in enumerate(fault_model_trajectories.keys()):
+            s_i_gag_fm = fault_model_trajectories[fm][2][-1]
+            a_i_gag, _ = model.predict(s_i_gag_fm, deterministic=DETERMINISTIC)
+            a_i_gag_fm = fault_model_trajectories[fm][0](a_i_gag)
+            s_i_gag_fm, reward, done, trunc, info = fault_model_trajectories[fm][1].step(a_i_gag_fm)
+            fault_model_trajectories[fm][2].append(a_i_gag_fm)
+            fault_model_trajectories[fm][2].append(s_i_gag_fm)
+            if lst_states[i] is not None:
+                if not np.array_equal(lst_states[i], s_i_gag_fm):
+                    irrelevant_keys.append(fm)
+        for fm in irrelevant_keys:
+            fault_model_trajectories.pop(fm)
+        if len(fault_model_trajectories) == 1:
+            break
+
+    # finilizing the output
+    determined_fms = []
+    for key in fault_model_trajectories.keys():
+        determined_fms.append(key)
     end_time = time.time()
     elapsed_time_sec = end_time - start_time
     elapsed_time_ms = elapsed_time_sec * 1000
-
-    # finilizing the output
-    sorted_zipped_lists = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    determined_fms, ranks = zip(*sorted_zipped_lists)
-
-    try:
-        fm_rank = determined_fms.index(fault_model)
-    except ValueError:
-        fm_rank = len(determined_fms)
     output = {
         "fm": determined_fms,
-        "fm_rank": fm_rank,
         "runtime_sec": elapsed_time_sec,
         "runtime_ms": elapsed_time_ms
     }
-
     return output
 
 
 diagnosers = {
     # abstract fault models (suitable for all environments)
-    "diagnose_deterministic_faults_full_obs_wfm": diagnose_deterministic_faults_full_obs_wfm,
-    "diagnose_deterministic_faults_full_obs_sfm": diagnose_deterministic_faults_full_obs_sfm,
-    "diagnose_deterministic_faults_part_obs_wfm": diagnose_deterministic_faults_part_obs_wfm,
-    "diagnose_deterministic_faults_part_obs_sfm": diagnose_deterministic_faults_part_obs_sfm,
-    "sfm_stofm_fobs_partical": sfm_stofm_fobs_partical,
-    "sfm_stofm_fobs_sample": sfm_stofm_fobs_sample
+    "DWF": DWF,
+    "DWP": DWP,
+    "DSF": DSF,
+    "DSP": DSP,
+    "SSF_SMP": SSF_SMP,
+    "SSF_PF": SSF_PF,
+    "W": W,
+    "SD": SD
 }

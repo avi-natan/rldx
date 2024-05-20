@@ -99,17 +99,20 @@ def execute_trajectory(env_name,
                        instance_seed,
                        fault_model,
                        fault_probability):
-    trajectory_execution, faulty_actions_indices = execute(env_name,
-                                                           render_mode,
-                                                           ml_model_name,
-                                                           total_timesteps,
-                                                           fault_model_generator,
-                                                           max_exec_len,
-                                                           fault_model_type,
-                                                           debug_print,
-                                                           instance_seed,
-                                                           fault_model,
-                                                           fault_probability)
+    trajectory_execution = []
+    faulty_actions_indices = []
+    while len(faulty_actions_indices) == 0:
+        trajectory_execution, faulty_actions_indices = execute(env_name,
+                                                               render_mode,
+                                                               ml_model_name,
+                                                               total_timesteps,
+                                                               fault_model_generator,
+                                                               max_exec_len,
+                                                               fault_model_type,
+                                                               debug_print,
+                                                               instance_seed,
+                                                               fault_model,
+                                                               fault_probability)
     if len(trajectory_execution) % 2 != 1:
         if len(faulty_actions_indices) > 0 and faulty_actions_indices[-1] * 2 == len(trajectory_execution):
             trajectory_execution = trajectory_execution[:-1]
@@ -168,7 +171,7 @@ def generate_observation_mask(obs_size, obs_p_visible, obs_p_mean, obs_p_dev):
         elif end_index == obs_size - 1:
             start_index = start_index - missing
         else:
-            raise Exception("this shouldnt happen (main line 88)")
+            raise Exception("this shouldnt happen (main line 171)")
     # Distribute the ones within the range
     indices = random.sample(range(start_index, end_index), ones)
     for i in indices:
@@ -295,13 +298,13 @@ def run_experimental_setup(arguments):
                                         str(list(fault_models.keys())),
                                         sample_size,
                                         json.dumps(output) if param_dict["c10_debug_print"] == 1 else "Omitted",
-                                        output['i'] if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
-                                        str(output['a_i']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_wfm' else "Irrelevant",
-                                        str(output['fault_occurence_range']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_wfm' else "Irrelevant",
-                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
-                                        len(output['fm']) if param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_full_obs_sfm' or param_dict["c7_diagnoser"] == 'diagnose_deterministic_faults_part_obs_sfm' else "Irrelevant",
-                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'sfm_stofm_fobs_partical' or param_dict["c7_diagnoser"] == 'sfm_stofm_fobs_sample' else "Irrelevant",
-                                        output['fm_rank'] if param_dict["c7_diagnoser"] == 'sfm_stofm_fobs_partical' or param_dict["c7_diagnoser"] == 'sfm_stofm_fobs_sample' else "Irrelevant",
+                                        output['i'] if param_dict["c7_diagnoser"] == 'DWF' else "Irrelevant",
+                                        str(output['a_i']) if param_dict["c7_diagnoser"] == 'DWF' else "Irrelevant",
+                                        str(output['fault_occurence_range']) if param_dict["c7_diagnoser"] == 'DWP' else "Irrelevant",
+                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'DSF' or param_dict["c7_diagnoser"] == 'DSP' else "Irrelevant",
+                                        len(output['fm']) if param_dict["c7_diagnoser"] == 'DSF' or param_dict["c7_diagnoser"] == 'DSP' else "Irrelevant",
+                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'SSF_PF' or param_dict["c7_diagnoser"] == 'SSF_SMP' else "Irrelevant",
+                                        output['fm_rank'] if param_dict["c7_diagnoser"] == 'SSF_PF' or param_dict["c7_diagnoser"] == 'SSF_SMP' else "Irrelevant",
                                         output['runtime_sec'],
                                         output['runtime_ms']
                                     ]
@@ -395,7 +398,7 @@ if __name__ == '__main__':
     '''
 
     # ================== debug setup algs domains ============
-    # ALG1: diagnose_deterministic_faults_full_obs_wfm
+    # ALG1: DWF
     # ALG1DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "human",
@@ -405,7 +408,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_wfm",
+    #                       "DWF",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -426,7 +429,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_wfm",
+    #                       "DWF",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -455,7 +458,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_wfm",
+    #                       "DWF",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",
@@ -473,7 +476,7 @@ if __name__ == '__main__':
     #                        # "[0,2,1,3,4,5]"  # swapping fire for going right
     #                        ],
     #                       -1)
-    # ALG2: diagnose_deterministic_faults_full_obs_sfm
+    # ALG2: DSF
     # ALG2DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "human",
@@ -483,7 +486,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_sfm",
+    #                       "DSF",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -504,7 +507,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_sfm",
+    #                       "DSF",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -533,7 +536,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_full_obs_sfm",
+    #                       "DSF",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",
@@ -551,7 +554,7 @@ if __name__ == '__main__':
     #                        # "[0,2,1,3,4,5]"  # swapping fire for going right
     #                        ],
     #                       -1)
-    # ALG3: diagnose_deterministic_faults_part_obs_wfm
+    # ALG3: DWP
     # ALG3DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "human",
@@ -561,7 +564,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_wfm",
+    #                       "DWP",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -582,7 +585,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_wfm",
+    #                       "DWP",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -611,7 +614,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_wfm",
+    #                       "DWP",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",
@@ -629,7 +632,7 @@ if __name__ == '__main__':
     #                        # "[0,2,1,3,4,5]"  # swapping fire for going right
     #                        ],
     #                       -1)
-    # ALG4: diagnose_deterministic_faults_part_obs_sfm
+    # ALG4: DSP
     # ALG4DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "human",
@@ -639,7 +642,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_sfm",
+    #                       "DSP",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -660,7 +663,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_sfm",
+    #                       "DSP",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -689,7 +692,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "deterministic",
-    #                       "diagnose_deterministic_faults_part_obs_sfm",
+    #                       "DSP",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",
@@ -707,7 +710,7 @@ if __name__ == '__main__':
     #                        # "[0,2,1,3,4,5]"  # swapping fire for going right
     #                        ],
     #                       -1)
-    # ALG5: sfm_stofm_fobs_partical
+    # ALG5: SSF_PF
     # ALG5DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "rgb_array",
@@ -717,7 +720,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_partical",
+    #                       "SSF_PF",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -738,7 +741,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_partical",
+    #                       "SSF_PF",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -767,7 +770,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_partical",
+    #                       "SSF_PF",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",
@@ -785,7 +788,7 @@ if __name__ == '__main__':
     #                        # "[0,2,1,3,4,5]"  # swapping fire for going right
     #                        ],
     #                       -1)
-    # ALG6: sfm_stofm_fobs_sample
+    # ALG6: SSF_SMP
     # ALG6DOM1
     # run_single_experiment("LunarLander_v2",
     #                       "rgb_array",
@@ -795,7 +798,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_sample",
+    #                       "SSF_SMP",
     #                       0,
     #                       42,
     #                       "[0,0,2,3]",
@@ -816,7 +819,7 @@ if __name__ == '__main__':
     #                       "box",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_sample",
+    #                       "SSF_SMP",
     #                       0,
     #                       42,
     #                       "[0,0,1,1,1,1,1,1];[0,0,0,0,0,0,0,0];-1;1",
@@ -845,7 +848,7 @@ if __name__ == '__main__':
     #                       "discrete",
     #                       200,
     #                       "stochastic",
-    #                       "sfm_stofm_fobs_partical",
+    #                       "SSF_PF",
     #                       0,
     #                       42,
     #                       "[0,1,2,0,4,0]",

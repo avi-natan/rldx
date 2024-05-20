@@ -23,7 +23,7 @@ def execute(env_name,
     # initialize environment
     env = gym.make(env_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
-    print(f'initial observation: {initial_obs.tolist()}')
+    # print(f'initial observation: {initial_obs.tolist()}')
 
     # load trained model
     models_dir = f"environments/{env_name}/models/{ml_model_name}"
