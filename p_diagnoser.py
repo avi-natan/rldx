@@ -670,17 +670,52 @@ def SD(env_name,
         for fm in irrelevant_keys:
             fault_model_trajectories.pop(fm)
         if len(fault_model_trajectories) == 1:
+            # print(f"i broke at {i}")
             break
 
     # finilizing the output
     determined_fms = []
     for key in fault_model_trajectories.keys():
         determined_fms.append(key)
-    end_time = time.time()
-    elapsed_time_sec = end_time - start_time
-    elapsed_time_ms = elapsed_time_sec * 1000
+
+    # give ranking if there are more than one fault model surviving
+    if len(determined_fms) > 1:
+        fms_ranks = []
+        for fm_i, fm in enumerate(determined_fms):
+            lst_actions_fm = []
+            for i in range(1, len(fault_model_trajectories[fm][2]), 2):
+                lst_actions_fm.append(fault_model_trajectories[fm][2][i])
+            num_actual_faults = 0
+            for i in range(len(lst_actions_fm)):
+                if lst_actions[i] != lst_actions_fm[i]:
+                    num_actual_faults += 1
+            num_potential_faults = 0
+            for i in range(len(lst_actions_fm)):
+                a = lst_actions[i]
+                fa = fault_model_trajectories[fm][0](a)
+                if a != fa:
+                    num_potential_faults += 1
+            rank = num_actual_faults * 1.0 / num_potential_faults
+            fms_ranks.append(rank)
+        end_time = time.time()
+        elapsed_time_sec = end_time - start_time
+        elapsed_time_ms = elapsed_time_sec * 1000
+
+        zipped_lists = zip(determined_fms, fms_ranks)
+        sorted_zipped_lists = sorted(zipped_lists, key=lambda x: x[-1], reverse=True)
+        determined_fms, fms_ranks = zip(*sorted_zipped_lists)
+    else:
+        end_time = time.time()
+        elapsed_time_sec = end_time - start_time
+        elapsed_time_ms = elapsed_time_sec * 1000
+
+    try:
+        fm_rank = determined_fms.index(fault_model)
+    except ValueError:
+        fm_rank = len(fault_models)
     output = {
         "fm": determined_fms,
+        "fm_rank": fm_rank,
         "runtime_sec": elapsed_time_sec,
         "runtime_ms": elapsed_time_ms
     }
