@@ -6,7 +6,7 @@ import gym
 from h_consts import DETERMINISTIC
 from h_rl_models import models
 
-def W2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def W(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
     # welcome message
     print(f'diagnosing with diagnoser: W\n========================================================================================')
 
@@ -54,7 +54,7 @@ def W2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, 
     return output
 
 
-def SN2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def SN(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
     # welcome message
     print(f'diagnosing with diagnoser: SN\n========================================================================================')
 
@@ -122,7 +122,7 @@ def SN2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps,
     return raw_output
 
 
-def SIF2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def SIF(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
     # welcome message
     print(f'diagnosing with diagnoser: SIF\n========================================================================================')
 
@@ -252,7 +252,7 @@ def SIF2(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps
 
 diagnosers = {
     # new fault models
-    "W": W2,
-    "SN": SN2,
-    "SIF": SIF2
+    "W": W,
+    "SN": SN,
+    "SIF": SIF
 }

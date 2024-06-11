@@ -9,8 +9,8 @@ import xlsxwriter
 
 from h_common import read_experimental_params
 from h_fault_model_generator import FaultModelGeneratorDiscrete
-from p_diagnosers import W2, SIF2, SN2, diagnosers
-from p_executor import execute2
+from p_diagnosers import W, SIF, SN, diagnosers
+from p_executor import execute
 
 
 # separating trajectory to actions and states
@@ -77,16 +77,16 @@ def single_experiment_prepare_inputs(domain_name,
     trajectory_execution = []
     faulty_actions_indices = []
     while len(faulty_actions_indices) == 0:
-        trajectory_execution, faulty_actions_indices = execute2(domain_name,
-                                                                debug_print,
-                                                                execution_fault_mode_name,
-                                                                instance_seed,
-                                                                fault_probability,
-                                                                render_mode,
-                                                                ml_model_name,
-                                                                total_timesteps,
-                                                                fault_mode_generator,
-                                                                max_exec_len)
+        trajectory_execution, faulty_actions_indices = execute(domain_name,
+                                                               debug_print,
+                                                               execution_fault_mode_name,
+                                                               instance_seed,
+                                                               fault_probability,
+                                                               render_mode,
+                                                               ml_model_name,
+                                                               total_timesteps,
+                                                               fault_mode_generator,
+                                                               max_exec_len)
 
     # ### separating trajectory to actions and states
     registered_actions, observations = separate_trajectory(trajectory_execution)
@@ -316,7 +316,7 @@ def run_W_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run W
-    raw_output = W2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = W(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
     output = rank_diagnoses_WFM(raw_output, registered_actions)
@@ -362,7 +362,7 @@ def run_SN_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run SN
-    raw_output = SN2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = SN(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
     output = rank_diagnoses_SFM(raw_output, registered_actions)
@@ -408,7 +408,7 @@ def run_SIF_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run SIF
-    raw_output = SIF2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = SIF(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
     output = rank_diagnoses_SFM(raw_output, registered_actions)

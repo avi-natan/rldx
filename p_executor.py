@@ -6,16 +6,16 @@ from h_consts import DETERMINISTIC
 from h_rl_models import models
 
 
-def execute2(domain_name,
-             debug_print,
-             execution_fault_mode_name,
-             instance_seed,
-             fault_probability,
-             render_mode,
-             ml_model_name,
-             total_timesteps,
-             fault_mode_generator,
-             max_exec_len):
+def execute(domain_name,
+            debug_print,
+            execution_fault_mode_name,
+            instance_seed,
+            fault_probability,
+            render_mode,
+            ml_model_name,
+            total_timesteps,
+            fault_mode_generator,
+            max_exec_len):
     print(f'executing with fault mode: {execution_fault_mode_name}\n========================================================================================')
 
     # initialize environment
