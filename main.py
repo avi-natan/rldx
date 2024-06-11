@@ -8,7 +8,7 @@ import xlsxwriter
 
 from h_common import read_experimental_params
 from h_fault_model_generator_list import fault_model_generators
-from p_diagnoser import diagnosers
+from p_diagnosers import diagnosers
 from p_executor import execute
 from p_trainer import train_on_environment
 
@@ -302,9 +302,9 @@ def run_experimental_setup(arguments):
                                         output['fault_occurence_range'][0] if param_dict["c7_diagnoser"] == 'W' else "Irrelevant",
                                         output['fault_occurence_range'][1] if param_dict["c7_diagnoser"] == 'W' else "Irrelevant",
                                         output['fault_occurence_range'][1]-output['fault_occurence_range'][0] if param_dict["c7_diagnoser"] == 'W' else "Irrelevant",
-                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF_SMP' or param_dict["c7_diagnoser"] == 'SSF_PF' else "Irrelevant",
-                                        len(output['fm']) if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF_SMP' or param_dict["c7_diagnoser"] == 'SSF_PF' else "Irrelevant",
-                                        output['fm_rank'] if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF_SMP' or param_dict["c7_diagnoser"] == 'SSF_PF' else "Irrelevant",
+                                        str(output['fm']) if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF' or param_dict["c7_diagnoser"] == 'SSP' else "Irrelevant",
+                                        len(output['fm']) if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF' or param_dict["c7_diagnoser"] == 'SSP' else "Irrelevant",
+                                        output['fm_rank'] if param_dict["c7_diagnoser"] == 'SD' or param_dict["c7_diagnoser"] == 'SSF' or param_dict["c7_diagnoser"] == 'SSP' else "Irrelevant",
                                         output['runtime_sec'],
                                         output['runtime_ms']
                                     ]
@@ -349,9 +349,9 @@ def run_experimental_setup(arguments):
         {'header': 'dp3_W_range_start'},
         {'header': 'dp4_W_range_end'},
         {'header': 'dp5_W_range_length'},
-        {'header': 'dp6_SD_SSF_determined_fault_models'},
-        {'header': 'dp7_SD_SSF_determined_fault_models_num'},
-        {'header': 'dp8_SD_SSF_determined_fault_models_rank'},
+        {'header': 'dp6_SD_SSF_SSP_determined_fault_models'},
+        {'header': 'dp7_SD_SSF_SSP_determined_fault_models_num'},
+        {'header': 'dp8_SD_SSF_SSP_determined_fault_models_rank'},
         {'header': 'dp9_algall_runtime_sec'},
         {'header': 'dp10_algall_runtime_ms'}
     ]
@@ -762,7 +762,7 @@ if __name__ == '__main__':
     #                        ],
     #                       -1)
     # ALG5DOM3
-    # run_single_experiment("ALE/SpaceInvaders_v5",  # todo check later maybe
+    # run_single_experiment("ALE/SpaceInvaders_v5",
     #                       "rgb_array",
     #                       "rgb_array",
     #                       "PPO",
@@ -840,7 +840,7 @@ if __name__ == '__main__':
     #                        ],
     #                       10)
     # ALG6DOM3
-    # run_single_experiment("ALE/SpaceInvaders_v5",  # todo check later maybe
+    # run_single_experiment("ALE/SpaceInvaders_v5",
     #                       "rgb_array",
     #                       "rgb_array",
     #                       "PPO",
