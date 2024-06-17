@@ -64,7 +64,7 @@ def single_experiment_prepare_inputs(domain_name,
     ml_model_name = "PPO"
 
     # ### total training timesteps
-    total_timesteps = 90000
+    total_timesteps = 'chosen'
 
     # ### initialize fault model generator
     # fault_mode_generator = FaultModelGeneratorBox()
@@ -119,7 +119,7 @@ def prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, po
     return fault_modes
 
 
-def rank_diagnoses_WFM(raw_output, registered_actions):
+def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
     # TODO think about more sophisticated ranking elgorithm
     ranking_start_time = time.time()
     G = raw_output['diagnoses']
@@ -144,7 +144,7 @@ def rank_diagnoses_WFM(raw_output, registered_actions):
     return output
 
 
-def rank_diagnoses_SFM(raw_output, registered_actions):
+def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
     ranking_start_time = time.time()
     G = raw_output['diagnoses']
     diagnoses = []
@@ -162,7 +162,14 @@ def rank_diagnoses_SFM(raw_output, registered_actions):
             fa = G[key_j][0](a)
             if a != fa:
                 num_potential_faults += 1
-        rank = num_actual_faults * 1.0 / num_potential_faults
+
+        if debug_print:
+            print(f'num_actual_faults / num_potential_faults: {num_actual_faults} / {num_potential_faults}')
+
+        if num_potential_faults == 0:
+            rank = 1.0
+        else:
+            rank = num_actual_faults * 1.0 / num_potential_faults
 
         k_j = key_j.split('_')[0]
         diagnoses.append(k_j)
@@ -319,7 +326,7 @@ def run_W_single_experiment(domain_name,
     raw_output = W(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
-    output = rank_diagnoses_WFM(raw_output, registered_actions)
+    output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
 
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, [], 0,
@@ -365,7 +372,7 @@ def run_SN_single_experiment(domain_name,
     raw_output = SN(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
-    output = rank_diagnoses_SFM(raw_output, registered_actions)
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
@@ -411,7 +418,7 @@ def run_SIF_single_experiment(domain_name,
     raw_output = SIF(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, total_timesteps=total_timesteps, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
-    output = rank_diagnoses_SFM(raw_output, registered_actions)
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
@@ -471,9 +478,9 @@ def run_experimental_setup(arguments, debug_print):
 
                         # ### ranking the diagnoses
                         if param_dict["diagnoser_name"] == "W":
-                            output = rank_diagnoses_WFM(raw_output, registered_actions)
+                            output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
                         else:
-                            output = rank_diagnoses_SFM(raw_output, registered_actions)
+                            output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
                         # ### preparing record for writing to excel file
                         record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, param_dict['possible_fault_mode_names'], num_candidate_fault_modes,
