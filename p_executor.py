@@ -42,9 +42,10 @@ def execute(domain_name,
     while not done and exec_len < max_exec_len:
         trajectory.append(obs)
         if debug_print:
-            print(f'a#:{action_number} [PREVOBS]: {obs.tolist()}')
+            print(f'a#:{action_number} [PREVOBS]: {obs.tolist() if not isinstance(obs, int) else obs}')
         action, _ = model.predict(obs, deterministic=DETERMINISTIC)
-        trajectory.append(int(action))
+        action = int(action)
+        trajectory.append(action)
         if random.random() < fault_probability:
             faulty_action = execution_fault_mode(action)
         else:
