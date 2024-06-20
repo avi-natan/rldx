@@ -486,8 +486,7 @@ def single_experiment_Assault_SN():
                                         "[0,2,1,3,4,5,6]",
                                         "[0,3,2,1,4,5,6]",
                                         "[0,4,2,3,1,5,6]",
-                                        "[0,5,2,3,4,1,6]",
-                                        "[0,6,2,3,4,5,1]"
+                                        "[0,5,2,3,4,1,6]"
                                         ]
         sif_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sif_domain_name,
@@ -538,8 +537,7 @@ def single_experiment_Assault_SIF():
                                         "[0,2,1,3,4,5,6]",
                                         "[0,3,2,1,4,5,6]",
                                         "[0,4,2,3,1,5,6]",
-                                        "[0,5,2,3,4,1,6]",
-                                        "[0,6,2,3,4,5,1]"
+                                        "[0,5,2,3,4,1,6]"
                                         ]
         sif_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
