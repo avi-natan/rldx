@@ -303,7 +303,7 @@ def single_experiment_CartPole_W():
         print(f'try {i}/{NUM_TRIES}')
         w_domain_name = "CartPole_v1"
         w_debug_print = False
-        w_execution_fault_mode_name = "[1,1]"
+        w_execution_fault_mode_name = "[0,0]"
         w_instance_seed = 42
         w_fault_probability = 1.0
         w_percent_visible_states = 100
@@ -343,7 +343,7 @@ def single_experiment_CartPole_SN():
         print(f'try {i}/{NUM_TRIES}')
         sn_domain_name = "CartPole_v1"
         sn_debug_print = False
-        sn_execution_fault_mode_name = "[1,1]"
+        sn_execution_fault_mode_name = "[0,0]"
         sn_instance_seed = 42
         sn_fault_probability = 1.0
         sn_percent_visible_states = 100
@@ -386,7 +386,7 @@ def single_experiment_CartPole_SIF():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "CartPole_v1"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[1,1]"
+        sif_execution_fault_mode_name = "[0,0]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -432,7 +432,7 @@ def single_experiment_Assault_W():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Assault_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5,6]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5,6]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -472,7 +472,7 @@ def single_experiment_Assault_SN():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Assault_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5,6]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5,6]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -523,7 +523,7 @@ def single_experiment_Assault_SIF():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Assault_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5,6]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5,6]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -577,7 +577,7 @@ def single_experiment_Carnival_W():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Carnival_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -617,7 +617,7 @@ def single_experiment_Carnival_SN():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Carnival_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -668,7 +668,7 @@ def single_experiment_Carnival_SIF():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/Carnival_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -722,7 +722,7 @@ def single_experiment_SpaceInvaders_W():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/SpaceInvaders_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -762,7 +762,7 @@ def single_experiment_SpaceInvaders_SN():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/SpaceInvaders_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
@@ -813,7 +813,7 @@ def single_experiment_SpaceInvaders_SIF():
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "ALE/SpaceInvaders_v5"
         sif_debug_print = False
-        sif_execution_fault_mode_name = "[0,1,0,3,4,5]"
+        sif_execution_fault_mode_name = "[0,0,2,3,4,5]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
