@@ -551,7 +551,7 @@ def single_experiment_MountainCar_SN():
             "[1,1,1]",
             "[2,2,2]"
         ]
-        sn_num_candidate_fault_modes = 3
+        sn_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
                                                                                          ml_model_name=sn_ml_model_name,
                                                                                          render_mode=sn_render_mode,
@@ -608,7 +608,7 @@ def single_experiment_MountainCar_SIF():
             "[1,1,1]",
             "[2,2,2]"
         ]
-        sif_num_candidate_fault_modes = 3
+        sif_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
                                                                                           ml_model_name=sif_ml_model_name,
                                                                                           render_mode=sif_render_mode,
@@ -714,7 +714,7 @@ def single_experiment_Taxi_SN():
             "[0,5,2,3,4,1]",
             "[1,0,2,3,4,5]"
         ]
-        sn_num_candidate_fault_modes = 3
+        sn_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
                                                                                          ml_model_name=sn_ml_model_name,
                                                                                          render_mode=sn_render_mode,
@@ -771,7 +771,7 @@ def single_experiment_Taxi_SIF():
             "[0,5,2,3,4,1]",
             "[1,0,2,3,4,5]"
         ]
-        sif_num_candidate_fault_modes = 3
+        sif_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
                                                                                           ml_model_name=sif_ml_model_name,
                                                                                           render_mode=sif_render_mode,
