@@ -13,7 +13,6 @@ def execute(domain_name,
             fault_probability,
             render_mode,
             ml_model_name,
-            total_timesteps,
             fault_mode_generator,
             max_exec_len):
     print(f'executing with fault mode: {execution_fault_mode_name}\n========================================================================================')
@@ -25,7 +24,7 @@ def execute(domain_name,
 
     # load trained model
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
-    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
     model = models[ml_model_name].load(model_path, env=env)
 
     # initialize execution fault mode

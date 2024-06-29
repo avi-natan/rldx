@@ -8,7 +8,7 @@ import gym
 from h_consts import DETERMINISTIC
 from h_rl_models import models
 
-def W(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
@@ -21,12 +21,12 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, d
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
-    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
     policy = models[ml_model_name].load(model_path)
 
     # make sure the first state is the same in obs and simulation
     s_0, _ = simulator.reset()
-    assert s_0.all() == observations[0].all()
+    assert np.array_equal(s_0, observations[0])
 
     diagnosis_start_time = time.time()
     b = 0
@@ -34,6 +34,7 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, d
     S = observations[0]
     for i in range(1, len(observations)):
         a, _ = policy.predict(S, deterministic=DETERMINISTIC)
+        a = int(a)
         S, reward, done, trunc, info = simulator.step(a)
         if observations[i] is not None:
             if np.array_equal(observations[i], S):
@@ -70,7 +71,7 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, d
     return output
 
 
-def SN(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
@@ -79,7 +80,7 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, 
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
-    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
     policy = models[ml_model_name].load(model_path)
 
     # initialize time counting
@@ -152,7 +153,7 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, 
     return raw_output
 
 
-def SIF(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps, domain_name, observations, candidate_fault_modes):
+def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
@@ -161,7 +162,7 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps,
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
-    model_path = f"{models_dir}/{total_timesteps}.zip"
+    model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
     policy = models[ml_model_name].load(model_path)
 
     # initialize time counting
@@ -192,6 +193,7 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, total_timesteps,
         for key_j in G.keys():
             ts1 = time.time()
             a_gag_i, _ = policy.predict(G[key_j][4], deterministic=DETERMINISTIC)
+            a_gag_i = int(a_gag_i)
             a_gag_i_j = G[key_j][0](a_gag_i)
             te1 = time.time()
             diagnosis_runtime_sec += te1 - ts1
