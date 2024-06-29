@@ -865,17 +865,18 @@ def single_experiment_FrozenLake_SN():
         sn_instance_seed = 42
         sn_fault_probability = 1.0
         sn_percent_visible_states = 100
-        sn_possible_fault_mode_names = ["[0,0,2,3]",  # shutting down jets
-                                        "[0,1,0,3]",
-                                        "[0,1,2,0]",
-                                        "[0,0,0,3]",
-                                        "[0,0,2,0]",
-                                        "[0,1,0,0]",
-                                        "[0,0,0,0]",
-                                        "[0,3,2,1]",  # swapping jets
-                                        "[0,2,1,3]",
-                                        "[0,1,3,2]"
-                                        ]
+        sn_possible_fault_mode_names = [
+            "[0,0,2,3]",
+            "[2,1,2,3]",
+            "[0,1,2,0]",
+            "[0,0,0,3]",
+            "[0,0,2,0]",
+            "[0,1,0,0]",
+            "[0,0,0,0]",
+            "[0,3,2,1]",
+            "[2,1,0,3]",
+            "[1,0,2,3]"
+        ]
         sn_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
                                                                                          ml_model_name=sn_ml_model_name,
@@ -921,17 +922,18 @@ def single_experiment_FrozenLake_SIF():
         sif_instance_seed = 42
         sif_fault_probability = 1.0
         sif_percent_visible_states = 100
-        sif_possible_fault_mode_names = ["[0,0,2,3]",  # shutting down jets
-                                         "[0,1,0,3]",
-                                         "[0,1,2,0]",
-                                         "[0,0,0,3]",
-                                         "[0,0,2,0]",
-                                         "[0,1,0,0]",
-                                         "[0,0,0,0]",
-                                         "[0,3,2,1]",  # swapping jets
-                                         "[0,2,1,3]",
-                                         "[0,1,3,2]"
-                                         ]
+        sif_possible_fault_mode_names = [
+            "[0,0,2,3]",
+            "[2,1,2,3]",
+            "[0,1,2,0]",
+            "[0,0,0,3]",
+            "[0,0,2,0]",
+            "[0,1,0,0]",
+            "[0,0,0,0]",
+            "[0,3,2,1]",
+            "[2,1,0,3]",
+            "[1,0,2,3]"
+        ]
         sif_num_candidate_fault_modes = 10
         exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
                                                                                           ml_model_name=sif_ml_model_name,

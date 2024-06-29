@@ -26,17 +26,17 @@ if __name__ == '__main__':
         # single_experiment_CartPole_SN()           # OK ALL
         # single_experiment_CartPole_SIF()          # OK ALL
 
-        # single_experiment_MountainCar_W()         # OK
-        # single_experiment_MountainCar_SN()        # OK
-        # single_experiment_MountainCar_SIF()       # OK
+        # single_experiment_MountainCar_W()         # OK ALL
+        # single_experiment_MountainCar_SN()        # OK ALL
+        # single_experiment_MountainCar_SIF()       # OK ALL
 
-        # single_experiment_Taxi_W()                # OK
-        # single_experiment_Taxi_SN()               # OK
-        # single_experiment_Taxi_SIF()              # OK
+        # single_experiment_Taxi_W()                # OK ALL
+        # single_experiment_Taxi_SN()               # OK ALL
+        # single_experiment_Taxi_SIF()              # OK ALL
 
-        # single_experiment_FrozenLake_W()          # OK
-        # single_experiment_FrozenLake_SN()         # OK
-        # single_experiment_FrozenLake_SIF()        # OK
+        # single_experiment_FrozenLake_W()          # OK ALL
+        # single_experiment_FrozenLake_SN()         # OK ALL
+        # single_experiment_FrozenLake_SIF()        # OK ALL
 
         # single_experiment_Assault_W()             # TODO problem: "[0,0,2,3,4,5,6]"
         # single_experiment_Assault_SN()            # OK ALL
