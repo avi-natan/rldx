@@ -50,21 +50,23 @@ if __name__ == '__main__':
         # single_experiment_SpaceInvaders_SN()      # OK ALL
         # single_experiment_SpaceInvaders_SIF()     # TODO problem: "[0,1,2,3,0,5]",# but correct diagnosis didnt get 1.0 | "[0,3,2,1,4,5]",# but correct diagnosis didnt get 1.0 | "[0,4,2,3,1,5]",# but correct diagnosis didnt get 1.0 | "[0,5,2,3,4,1]",# but correct diagnosis didnt get 1.0 | "[1,0,2,3,4,5]"# but correct diagnosis didnt get 1.0
 
+        # ================== experimental setup ==================
+        render_mode = "rgb_array"       # "human", "rgb_array"
+        debug_print = False             # False, True
+        run_experimental_setup(arguments=sys.argv, render_mode=render_mode, debug_print=debug_print)
+
         print(f'finisehd gracefully')
-        # mixer.init()
-        # mixer.music.load('alarm.mp3')
-        # mixer.music.play()
-        # while mixer.music.get_busy():  # wait for music to finish playing
-        #     time.sleep(1)
+        mixer.init()
+        mixer.music.load('alarm.mp3')
+        mixer.music.play()
+        while mixer.music.get_busy():  # wait for music to finish playing
+            time.sleep(1)
     except ValueError as e:
         print(f'Value error: {e}')
-        # mixer.init()
-        # mixer.music.load('alarm.mp3')
-        # mixer.music.play()
-        # while mixer.music.get_busy():  # wait for music to finish playing
-        #     time.sleep(1)
+        mixer.init()
+        mixer.music.load('alarm.mp3')
+        mixer.music.play()
+        while mixer.music.get_busy():  # wait for music to finish playing
+            time.sleep(1)
 
-    # ================== experimental setup ==================
-    # do_debug_print = False
-    # run_experimental_setup(arguments=sys.argv, debug_print=do_debug_print)
     print(9)

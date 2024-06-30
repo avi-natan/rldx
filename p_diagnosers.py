@@ -65,7 +65,8 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
         "exp_duration_in_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1]
+        "exp_memory_max": memory_tracked[1],
+        "G_max_size":0
     }
 
     return output
@@ -147,7 +148,8 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
         "exp_duration_in_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1]
+        "exp_memory_max": memory_tracked[1],
+        "G_max_size": len(candidate_fault_modes)
     }
 
     return raw_output
@@ -167,6 +169,9 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
 
     # initialize time counting
     diagnosis_runtime_sec = 0.0
+
+    # initialize maximum size of G
+    G_max_size = 0
 
     # initialize unique ID's for each fault mode in order to represent different branchings
     I = {}
@@ -276,6 +281,9 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
         te3 = time.time()
         diagnosis_runtime_sec += te3 - ts3
 
+        # update the maximum size of G
+        G_max_size = max(G_max_size, len(G))
+
         if debug_print:
             if observations[i] is not None:
                 print(f'STEP {i}/{len(observations)}: OBSERVED')
@@ -307,7 +315,8 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
         "exp_duration_in_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1]
+        "exp_memory_max": memory_tracked[1],
+        "G_max_size": G_max_size
     }
 
     return raw_output
