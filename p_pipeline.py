@@ -210,6 +210,17 @@ def prepare_record(domain_name, debug_print, execution_fault_mode_name, instance
     return record
 
 
+def get_ordinal_rank(diagnoses, ranks, d):
+    index_d = diagnoses.index(d)
+    rank_d = ranks[index_d]
+
+    unique_ranks_set = set(ranks)
+    unique_ranks_list = sorted(list(unique_ranks_set), reverse=True)
+
+    res = unique_ranks_list.index(rank_d)
+    return res
+
+
 def write_records_to_excel(records, experimental_filename):
     columns = [
         {'header': '01_i_domain_name'},
@@ -262,7 +273,7 @@ def write_records_to_excel(records, experimental_filename):
             str(list(record_i['output']['diagnoses'])),  # 17_O_diagnoses
             str(list(record_i['output']['ranks'])),  # 18_O_ranks
             len(record_i['output']['diagnoses']),  # 19_O_num_diagnoses
-            record_i['output']['diagnoses'].index(record_i['execution_fault_mode_name']) if record_i['diagnoser'] != "W" else "Irrelevant",  # record_i['output']['diagnoses'].index(record_i['faulty_actions_indices'][0]),  # 20_O_correct_diagnosis_rank
+            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] != "W" else "Irrelevant",  # 20_O_correct_diagnosis_rank
             record_i['output']['diagnosis_runtime_sec'],  # 21_O_diagnosis_runtime_sec
             record_i['output']['diagnosis_runtime_ms'],  # 22_O_diagnosis_runtime_ms
             record_i['output']['ranking_runtime_sec'],  # 23_O_ranking_runtime_sec
