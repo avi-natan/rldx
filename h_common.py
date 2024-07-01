@@ -11,7 +11,7 @@ def output_trajectory_to_file(file_path_string, filename_string, trajectory_list
             else:
                 file.write(str(point.tolist()) + '\n')
 
-def read_experimental_params(params_file):
+def read_json_data(params_file):
     with open(params_file, 'r') as file:
         json_data = json.load(file)
     return json_data

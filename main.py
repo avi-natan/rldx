@@ -53,7 +53,7 @@ if __name__ == '__main__':
         # ================== experimental setup ==================
         render_mode = "rgb_array"       # "human", "rgb_array"
         debug_print = False             # False, True
-        run_experimental_setup(arguments=sys.argv, render_mode=render_mode, debug_print=debug_print)
+        run_experimental_setup(arguments=sys.argv, render_mode=render_mode, debug_print=debug_print, continue_from_saved_file=False)
 
         print(f'finisehd gracefully')
         mixer.init()
