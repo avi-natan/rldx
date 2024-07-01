@@ -1,10 +1,12 @@
 import copy
 import json
 import math
+import os
 import random
 import time
 from datetime import datetime
 
+import numpy
 import xlsxwriter
 
 from h_common import read_json_data
@@ -129,12 +131,16 @@ def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
 
     output = {
         "diagnoses": diagnoses,
-        "ranks": ranks,
         "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
         "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
+        "exp_duration_sec": raw_output['exp_duration_sec'],
+        "exp_duration_ms": raw_output['exp_duration_ms'],
+        "exp_memory_at_end": raw_output['exp_memory_at_end'],
+        "exp_memory_max": raw_output['exp_memory_max'],
+        "G_max_size": raw_output['G_max_size'],
+        "ranks": ranks,
         "ranking_runtime_sec": ranking_runtime_sec,
-        "ranking_runtime_ms": ranking_runtime_ms,
-        "G_max_size": raw_output['G_max_size']
+        "ranking_runtime_ms": ranking_runtime_ms
     }
     return output
 
@@ -180,12 +186,16 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
 
     output = {
         "diagnoses": diagnoses,
-        "ranks": ranks,
         "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
         "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
+        "exp_duration_sec": raw_output['exp_duration_sec'],
+        "exp_duration_ms": raw_output['exp_duration_ms'],
+        "exp_memory_at_end": raw_output['exp_memory_at_end'],
+        "exp_memory_max": raw_output['exp_memory_max'],
+        "G_max_size": raw_output['G_max_size'],
+        "ranks": ranks,
         "ranking_runtime_sec": ranking_runtime_sec,
         "ranking_runtime_ms": ranking_runtime_ms,
-        "G_max_size": raw_output['G_max_size']
     }
 
     return output
@@ -193,7 +203,7 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
 
 def prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
                    render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                   candidate_fault_modes, output, diagnoser):
+                   candidate_fault_modes, output, diagnoser, longest_hidden_state_sequence):
     record = {
         "domain_name": domain_name,
         "debug_print": debug_print,
@@ -206,15 +216,16 @@ def prepare_record(domain_name, debug_print, execution_fault_mode_name, instance
         "render_mode": render_mode,
         "ml_model_name": ml_model_name,
         "max_exec_len": max_exec_len,
-        "trajectory_execution": trajectory_execution,
+        "trajectory_execution": [str(list(item)) if isinstance(item, numpy.ndarray) else item for item in trajectory_execution],
         "faulty_actions_indices": faulty_actions_indices,
         "registered_actions": registered_actions,
-        "observations": observations,
+        "observations": [str(list(item)) for item in observations],
         "observation_mask": observation_mask,
-        "masked_observations": masked_observations,
+        "masked_observations": [str(list(item)) if item is not None else "None" for item in masked_observations],
         "candidate_fault_modes": list(candidate_fault_modes.keys()),
         "output": output,
-        "diagnoser": diagnoser
+        "diagnoser": diagnoser,
+        "longest_hidden_state_sequence": longest_hidden_state_sequence
     }
     return record
 
@@ -258,7 +269,12 @@ def write_records_to_excel(records, experimental_filename):
         {'header': '24_O_ranking_runtime_ms'},
         {'header': '25_O_total_runtime_sec'},
         {'header': '26_O_total_runtime_ms'},
-        {'header': '27_O_G_max_size'}
+        {'header': '27_O_G_max_size'},
+        {'header': '28_O_longest_hidden_state_sequence'},
+        {'header': '29_D_exp_duration_sec'},
+        {'header': '30_D_exp_duration_ms'},
+        {'header': '31_D_exp_memory_at_end'},
+        {'header': '32_D_exp_memory_max'}
     ]
     rows = []
     for i in range(len(records)):
@@ -278,7 +294,7 @@ def write_records_to_excel(records, experimental_filename):
             len(record_i['observation_mask']),  # 12_O_num_visible_states
             str(record_i['masked_observations']) if record_i['debug_print'] else 'Omitted',  # 13_O_masked_observations
             record_i['num_candidate_fault_modes'],  # 14_i_num_candidate_fault_modes
-            str(list(record_i['candidate_fault_modes'].keys())),  # 15_O_candidate_fault_modes
+            str(record_i['candidate_fault_modes']),  # 15_O_candidate_fault_modes
             record_i['diagnoser'],  # 16_i_diagnoser
             str(list(record_i['output']['diagnoses'])),  # 17_O_diagnoses
             str(list(record_i['output']['ranks'])),  # 18_O_ranks
@@ -290,7 +306,12 @@ def write_records_to_excel(records, experimental_filename):
             record_i['output']['ranking_runtime_ms'],  # 24_O_ranking_runtime_ms
             record_i['output']['diagnosis_runtime_sec'] + record_i['output']['ranking_runtime_sec'],  # 25_O_total_runtime_sec
             record_i['output']['diagnosis_runtime_ms'] + record_i['output']['ranking_runtime_ms'],  # 26_O_total_runtime_ms
-            record_i['output']['G_max_size'] if record_i['diagnoser'] == "SIF" else "Irrelevant"  # 27_O_G_max_size
+            record_i['output']['G_max_size'] if record_i['diagnoser'] == "SIF" else "Irrelevant",  # 27_O_G_max_size
+            record_i['longest_hidden_state_sequence'],  # 28_O_longest_hidden_state_sequence
+            record_i['output']['exp_duration_sec'],  # 29_D_exp_duration_sec
+            record_i['output']['exp_duration_ms'],  # 30_D_exp_duration_ms
+            record_i['output']['exp_memory_at_end'],  # 31_D_exp_memory_at_end
+            record_i['output']['exp_memory_max']  # 32_D_exp_memory_max
         ]
         rows.append(row)
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_filename.replace('/', '_')}.xlsx")
@@ -513,9 +534,9 @@ def run_experimental_setup(arguments, render_mode, debug_print, continue_from_sa
                     # ### generate observation mask
                     observation_mask = generate_observation_mask(len(observations), percent_visible_states)
                     # ### calculate largest hidden gap
-                    largest_hidden_gap = calculate_largest_hidden_gap(observation_mask)
+                    longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
                     print(f'OBSERVATION MASK: {str(observation_mask)}')
-                    print(f'LARGET HIDDEN GAP: {largest_hidden_gap}')
+                    print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
                     print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
                     print(f'observed {len(observation_mask)}/{len(observations)} states')
 
@@ -559,7 +580,7 @@ def run_experimental_setup(arguments, render_mode, debug_print, continue_from_sa
                             # ### preparing record for writing to excel file
                             record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, param_dict['possible_fault_mode_names'], num_candidate_fault_modes,
                                                     render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                                                    candidate_fault_modes, output, param_dict["diagnoser_name"])
+                                                    candidate_fault_modes, output, param_dict["diagnoser_name"], longest_hidden_state_sequence)
                             next_batch_records.append(record)
                             next_batch_calculated_instance_numbers.append(current_instance_number)
                             current_instance_number += 1

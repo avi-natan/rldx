@@ -1,4 +1,3 @@
-import hashlib
 import time
 import tracemalloc
 
@@ -52,8 +51,8 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     exp_rt_end = time.time()
-    exp_duration = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration * 1000
+    exp_duration_sec = exp_rt_end - exp_rt_begin
+    exp_duration_ms = exp_duration_sec * 1000
 
     memory_tracked = tracemalloc.get_traced_memory()
     # stopping the library
@@ -63,7 +62,8 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
         "diagnoses": D,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_in_ms": exp_duration_ms,
+        "exp_duration_sec": exp_duration_sec,
+        "exp_duration_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
         "exp_memory_max": memory_tracked[1],
         "G_max_size":0
@@ -135,8 +135,8 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     exp_rt_end = time.time()
-    exp_duration = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration * 1000
+    exp_duration_sec = exp_rt_end - exp_rt_begin
+    exp_duration_ms = exp_duration_sec * 1000
 
     memory_tracked = tracemalloc.get_traced_memory()
     # stopping the library
@@ -146,7 +146,8 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_in_ms": exp_duration_ms,
+        "exp_duration_sec": exp_duration_sec,
+        "exp_duration_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
         "exp_memory_max": memory_tracked[1],
         "G_max_size": len(candidate_fault_modes)
@@ -302,8 +303,8 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     exp_rt_end = time.time()
-    exp_duration = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration * 1000
+    exp_duration_sec = exp_rt_end - exp_rt_begin
+    exp_duration_ms = exp_duration_sec * 1000
 
     memory_tracked = tracemalloc.get_traced_memory()
     # stopping the library
@@ -313,7 +314,8 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_in_ms": exp_duration_ms,
+        "exp_duration_sec": exp_duration_sec,
+        "exp_duration_ms": exp_duration_ms,
         "exp_memory_at_end": memory_tracked[0],
         "exp_memory_max": memory_tracked[1],
         "G_max_size": G_max_size
