@@ -19,7 +19,6 @@ def execute(domain_name,
     print(f'executing with fault mode: {execution_fault_mode_name}\n========================================================================================')
 
     # initialize environment
-    # if domain_name == "FrozenLake_v1": TODO CONTINUE FROM HERE
     env = gym.make(domain_name.replace('_', '-'), render_mode=render_mode)
     initial_obs, _ = env.reset(seed=instance_seed)
     # print(f'initial observation: {initial_obs.tolist()}')
