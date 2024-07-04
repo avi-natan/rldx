@@ -10,7 +10,7 @@ from p_single_experiments import single_experiment_LunarLander_W, single_experim
     single_experiment_Assault_W, single_experiment_Assault_SN, single_experiment_Assault_SIF, \
     single_experiment_Carnival_W, single_experiment_Carnival_SN, single_experiment_Carnival_SIF, \
     single_experiment_SpaceInvaders_W, single_experiment_SpaceInvaders_SN, single_experiment_SpaceInvaders_SIF, single_experiment_MountainCar_W, single_experiment_MountainCar_SN, single_experiment_MountainCar_SIF, single_experiment_Taxi_W, single_experiment_Taxi_SN, single_experiment_Taxi_SIF, single_experiment_FrozenLake_W, single_experiment_FrozenLake_SN, single_experiment_FrozenLake_SIF, single_experiment_CartPole_SIF2, single_experiment_CartPole_W2, single_experiment_CartPole_SN2, \
-    single_experiment_MountainCar_W2, single_experiment_MountainCar_SN2, single_experiment_MountainCar_SIF2, single_experiment_Taxi_W2, single_experiment_Taxi_SN2, single_experiment_Taxi_SIF2
+    single_experiment_MountainCar_W2, single_experiment_MountainCar_SN2, single_experiment_MountainCar_SIF2, single_experiment_Taxi_W2, single_experiment_Taxi_SN2, single_experiment_Taxi_SIF2, single_experiment_Acrobot_W2, single_experiment_Acrobot_SN2, single_experiment_Acrobot_SIF2
 
 if __name__ == '__main__':
     try:
@@ -22,6 +22,9 @@ if __name__ == '__main__':
         # single_experiment_Acrobot_W()             # OK ALL
         # single_experiment_Acrobot_SN()            # OK ALL
         # single_experiment_Acrobot_SIF()           # OK ALL
+        # single_experiment_Acrobot_W2()            # OK ALL
+        # single_experiment_Acrobot_SN2()           # OK ALL
+        # single_experiment_Acrobot_SIF2()          # OK ALL
 
         # single_experiment_CartPole_W()            # OK ALL
         # single_experiment_CartPole_SN()           # OK ALL

@@ -4,6 +4,7 @@ import gym
 
 from h_consts import DETERMINISTIC
 from h_rl_models import models
+from h_state_refiners import refiners
 from h_wrappers import wrappers
 
 
@@ -102,7 +103,7 @@ def execute2(domain_name,
         trajectory.append(obs)
         if debug_print:
             print(f'a#:{action_number} [PREVOBS]: {obs.tolist() if not isinstance(obs, int) else obs}')
-        action, _ = model.predict(obs, deterministic=DETERMINISTIC)
+        action, _ = model.predict(refiners[domain_name](obs), deterministic=DETERMINISTIC)
         action = int(action)
         trajectory.append(action)
         if random.random() < fault_probability:

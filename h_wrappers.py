@@ -1,5 +1,33 @@
 import gym
 import numpy
+from numpy import cos, sin
+
+class AcrobotSetStepWrapper(gym.Wrapper):
+    def __init__(self, env):
+        super().__init__(env)
+
+    def reset(self, seed=None):
+        state, info = self.env.reset(seed=seed)
+
+        raw_state = self.unwrapped.state
+
+        # raw_state_as_state = numpy.array(
+        #     [cos(raw_state[0]), sin(raw_state[0]), cos(raw_state[1]), sin(raw_state[1]), raw_state[2], raw_state[3]], dtype=numpy.float32
+        # )
+        # a = numpy.array_equal(state, raw_state_as_state)
+        # TODO implement state conversion for all wrappers. for exeisting ones it will be identity
+        # todo raw and refined states. the datastructures such as obs will hold raw states. consider changing some set state methods
+
+        return raw_state, info
+
+    def set_state(self, raw_state):
+        self.unwrapped.state = raw_state
+
+    def step(self, action):
+        state, reward, done, trunc, info = self.env.step(action)
+
+        raw_state = self.unwrapped.state
+        return raw_state, reward, done, trunc, info
 
 
 class CartPoleSetStepWrapper(gym.Wrapper):
@@ -7,22 +35,23 @@ class CartPoleSetStepWrapper(gym.Wrapper):
         super().__init__(env)
 
     def reset(self, seed=None):
-        next_state, info = self.env.reset(seed=seed)
+        state, info = self.env.reset(seed=seed)
 
-        next_state2 = self.unwrapped.state
-        next_state2_as_ndarray = numpy.array(next_state2, dtype=numpy.float64)
-        return next_state2_as_ndarray, info
+        raw_state = self.unwrapped.state
 
-    def set_state(self, state):
-        self.unwrapped.state = state
+        # refined_state = numpy.array(raw_state, dtype=numpy.float32)
+        # a = numpy.array_equal(state, refined_state)
+
+        return raw_state, info
+
+    def set_state(self, raw_state):
+        self.unwrapped.state = raw_state
 
     def step(self, action):
-        next_state, reward, done, trunc, info = self.env.step(action)
-        # modify ...
+        state, reward, done, trunc, info = self.env.step(action)
 
-        next_state2 = self.unwrapped.state
-        next_state2_as_ndarray = numpy.array(next_state2, dtype=numpy.float64)
-        return next_state2_as_ndarray, reward, done, trunc, info
+        raw_state = self.unwrapped.state
+        return raw_state, reward, done, trunc, info
 
 
 class MountainCarSetStepWrapper(gym.Wrapper):
@@ -30,22 +59,23 @@ class MountainCarSetStepWrapper(gym.Wrapper):
         super().__init__(env)
 
     def reset(self, seed=None):
-        next_state, info = self.env.reset(seed=seed)
+        state, info = self.env.reset(seed=seed)
 
-        next_state2 = self.unwrapped.state
-        next_state2_as_ndarray = numpy.array(next_state2, dtype=numpy.float64)
-        return next_state2_as_ndarray, info
+        raw_state = self.unwrapped.state
 
-    def set_state(self, state):
-        self.unwrapped.state = state
+        # refined_state = numpy.array(raw_state, dtype=numpy.float32)
+        # a = numpy.array_equal(state, refined_state)
+
+        return raw_state, info
+
+    def set_state(self, raw_state):
+        self.unwrapped.state = raw_state
 
     def step(self, action):
-        next_state, reward, done, trunc, info = self.env.step(action)
-        # modify ...
+        state, reward, done, trunc, info = self.env.step(action)
 
-        next_state2 = self.unwrapped.state
-        next_state2_as_ndarray = numpy.array(next_state2, dtype=numpy.float64)
-        return next_state2_as_ndarray, reward, done, trunc, info
+        raw_state = self.unwrapped.state
+        return raw_state, reward, done, trunc, info
 
 
 class TaxiSetStepWrapper(gym.Wrapper):
@@ -53,25 +83,27 @@ class TaxiSetStepWrapper(gym.Wrapper):
         super().__init__(env)
 
     def reset(self, seed=None):
-        next_state, info = self.env.reset(seed=seed)
+        state, info = self.env.reset(seed=seed)
 
-        next_state2 = self.unwrapped.s
-        next_state2_as_int = int(next_state2)
-        return next_state2_as_int, info
+        raw_state = self.unwrapped.s
 
-    def set_state(self, state):
-        self.unwrapped.s = numpy.int64(state)
+        # refined_state = int(raw_state)
+        # a = state == refined_state
+
+        return raw_state, info
+
+    def set_state(self, raw_state):
+        self.unwrapped.s = raw_state
 
     def step(self, action):
-        next_state, reward, done, trunc, info = self.env.step(action)
-        # modify ...
+        state, reward, done, trunc, info = self.env.step(action)
 
-        next_state2 = self.unwrapped.s
-        next_state2_as_int = int(next_state2)
-        return next_state2_as_int, reward, done, trunc, info
+        raw_state = self.unwrapped.s
+        return raw_state, reward, done, trunc, info
 
 
 wrappers = {
+    "Acrobot_v1": AcrobotSetStepWrapper,
     "CartPole_v1": CartPoleSetStepWrapper,
     "MountainCar_v0": MountainCarSetStepWrapper,
     "Taxi_v3": TaxiSetStepWrapper

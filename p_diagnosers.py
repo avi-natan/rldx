@@ -6,8 +6,9 @@ import numpy as np
 import gym
 
 from h_consts import DETERMINISTIC
-from h_env_state_comparators import comparators
+from h_raw_state_comparators import comparators
 from h_rl_models import models
+from h_state_refiners import refiners
 from h_wrappers import wrappers
 
 
@@ -351,7 +352,7 @@ def W2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     e = len(observations) - 1
     S = observations[0]
     for i in range(1, len(observations)):
-        a, _ = policy.predict(S, deterministic=DETERMINISTIC)
+        a, _ = policy.predict(refiners[domain_name](S), deterministic=DETERMINISTIC)
         a = int(a)
         S, reward, done, trunc, info = simulator.step(a)
         if observations[i] is not None:
@@ -426,7 +427,7 @@ def SN2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
         irrelevant_keys = []
         for key_j in G.keys():
             ts1 = time.time()
-            a_gag_i, _ = policy.predict(G[key_j][2], deterministic=DETERMINISTIC)
+            a_gag_i, _ = policy.predict(refiners[domain_name](G[key_j][2]), deterministic=DETERMINISTIC)
             a_gag_i_j = G[key_j][0](a_gag_i)
             simulator.set_state(G[key_j][2])
             S_gag_i_j, reward, done, trunc, info = simulator.step(a_gag_i_j)
@@ -531,7 +532,7 @@ def SIF2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
         new_relevant_keys = {}
         for key_j in G.keys():
             ts1 = time.time()
-            a_gag_i, _ = policy.predict(G[key_j][2], deterministic=DETERMINISTIC)
+            a_gag_i, _ = policy.predict(refiners[domain_name](G[key_j][2]), deterministic=DETERMINISTIC)
             a_gag_i = int(a_gag_i)
             a_gag_i_j = G[key_j][0](a_gag_i)
             te1 = time.time()
