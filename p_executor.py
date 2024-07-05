@@ -8,15 +8,15 @@ from h_state_refiners import refiners
 from h_wrappers import wrappers
 
 
-def execute2(domain_name,
-             debug_print,
-             execution_fault_mode_name,
-             instance_seed,
-             fault_probability,
-             render_mode,
-             ml_model_name,
-             fault_mode_generator,
-             max_exec_len):
+def execute(domain_name,
+            debug_print,
+            execution_fault_mode_name,
+            instance_seed,
+            fault_probability,
+            render_mode,
+            ml_model_name,
+            fault_mode_generator,
+            max_exec_len):
     print(f'executing with fault mode: {execution_fault_mode_name}\n========================================================================================')
 
     # initialize environment

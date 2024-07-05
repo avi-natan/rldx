@@ -11,12 +11,12 @@ from h_state_refiners import refiners
 from h_wrappers import wrappers
 
 
-def W2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
+def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
     # welcome message
-    print(f'diagnosing with diagnoser: W2\n========================================================================================')
+    print(f'diagnosing with diagnoser: W\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -74,12 +74,12 @@ def W2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     return output
 
 
-def SN2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
+def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
     # welcome message
-    print(f'diagnosing with diagnoser: SN2\n========================================================================================')
+    print(f'diagnosing with diagnoser: SN\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -170,12 +170,12 @@ def fm_and_state_in_set(key_raw, state, FG):
     return False
 
 
-def SIF2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
+def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
     # welcome message
-    print(f'diagnosing with diagnoser: SIF2\n========================================================================================')
+    print(f'diagnosing with diagnoser: SIF\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -334,7 +334,7 @@ def SIF2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
 
 diagnosers = {
     # new fault models
-    "W2": W2,
-    "SN2": SN2,
-    "SIF2": SIF2
+    "W": W,
+    "SN": SN,
+    "SIF": SIF
 }

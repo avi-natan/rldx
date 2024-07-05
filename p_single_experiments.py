@@ -1,6 +1,6 @@
 import math
 
-from p_pipeline import run_SIF2_single_experiment, run_SN2_single_experiment, run_W2_single_experiment
+from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment
 
 
 # =================================================================================================
@@ -26,7 +26,7 @@ def single_experiment_LunarLander_W():
         w_percent_visible_states = 100
         w_possible_fault_mode_names = []
         w_num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W2_single_experiment(domain_name=w_domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=w_domain_name,
                                                                                         ml_model_name=w_ml_model_name,
                                                                                         render_mode=w_render_mode,
                                                                                         max_exec_len=w_max_exec_len,
@@ -82,7 +82,7 @@ def single_experiment_LunarLander_SN():
                                         "[0,1,3,2]"
                                         ]
         sn_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN2_single_experiment(domain_name=sn_domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
                                                                                          ml_model_name=sn_ml_model_name,
                                                                                          render_mode=sn_render_mode,
                                                                                          max_exec_len=sn_max_exec_len,
@@ -138,7 +138,7 @@ def single_experiment_LunarLander_SIF():
                                          "[0,1,3,2]"
                                          ]
         sif_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF2_single_experiment(domain_name=sif_domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
                                                                                           ml_model_name=sif_ml_model_name,
                                                                                           render_mode=sif_render_mode,
                                                                                           max_exec_len=sif_max_exec_len,
@@ -167,7 +167,7 @@ def single_experiment_LunarLander_SIF():
 # =================================================================================================
 # ============================================ Acrobot ============================================
 # =================================================================================================
-def single_experiment_Acrobot_W2():
+def single_experiment_Acrobot_W():
     # changable test settings - weak fault model (W)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -187,17 +187,17 @@ def single_experiment_Acrobot_W2():
         w_percent_visible_states = 100
         w_possible_fault_mode_names = []
         w_num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W2_single_experiment(domain_name=w_domain_name,
-                                                                                         ml_model_name=w_ml_model_name,
-                                                                                         render_mode=w_render_mode,
-                                                                                         max_exec_len=w_max_exec_len,
-                                                                                         debug_print=w_debug_print,
-                                                                                         execution_fault_mode_name=w_execution_fault_mode_name,
-                                                                                         instance_seed=w_instance_seed,
-                                                                                         fault_probability=w_fault_probability,
-                                                                                         percent_visible_states=w_percent_visible_states,
-                                                                                         possible_fault_mode_names=w_possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=w_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=w_domain_name,
+                                                                                        ml_model_name=w_ml_model_name,
+                                                                                        render_mode=w_render_mode,
+                                                                                        max_exec_len=w_max_exec_len,
+                                                                                        debug_print=w_debug_print,
+                                                                                        execution_fault_mode_name=w_execution_fault_mode_name,
+                                                                                        instance_seed=w_instance_seed,
+                                                                                        fault_probability=w_fault_probability,
+                                                                                        percent_visible_states=w_percent_visible_states,
+                                                                                        possible_fault_mode_names=w_possible_fault_mode_names,
+                                                                                        num_candidate_fault_modes=w_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -213,7 +213,7 @@ def single_experiment_Acrobot_W2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Acrobot_SN2():
+def single_experiment_Acrobot_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -243,17 +243,17 @@ def single_experiment_Acrobot_SN2():
                                         "[2,2,2]"
                                         ]
         sn_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN2_single_experiment(domain_name=sn_domain_name,
-                                                                                          ml_model_name=sn_ml_model_name,
-                                                                                          render_mode=sn_render_mode,
-                                                                                          max_exec_len=sn_max_exec_len,
-                                                                                          debug_print=sn_debug_print,
-                                                                                          execution_fault_mode_name=sn_execution_fault_mode_name,
-                                                                                          instance_seed=sn_instance_seed,
-                                                                                          fault_probability=sn_fault_probability,
-                                                                                          percent_visible_states=sn_percent_visible_states,
-                                                                                          possible_fault_mode_names=sn_possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=sn_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
+                                                                                         ml_model_name=sn_ml_model_name,
+                                                                                         render_mode=sn_render_mode,
+                                                                                         max_exec_len=sn_max_exec_len,
+                                                                                         debug_print=sn_debug_print,
+                                                                                         execution_fault_mode_name=sn_execution_fault_mode_name,
+                                                                                         instance_seed=sn_instance_seed,
+                                                                                         fault_probability=sn_fault_probability,
+                                                                                         percent_visible_states=sn_percent_visible_states,
+                                                                                         possible_fault_mode_names=sn_possible_fault_mode_names,
+                                                                                         num_candidate_fault_modes=sn_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -269,13 +269,13 @@ def single_experiment_Acrobot_SN2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Acrobot_SIF2():
+def single_experiment_Acrobot_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
     exp_durations_in_ms = []
     exp_memories_at_end = []
     exp_memories_max = []
 
-    NUM_TRIES = 1
+    NUM_TRIES = 10
     for i in range(NUM_TRIES):
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "Acrobot_v1"
@@ -299,17 +299,17 @@ def single_experiment_Acrobot_SIF2():
                                          "[2,2,2]"
                                          ]
         sif_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF2_single_experiment(domain_name=sif_domain_name,
-                                                                                           ml_model_name=sif_ml_model_name,
-                                                                                           render_mode=sif_render_mode,
-                                                                                           max_exec_len=sif_max_exec_len,
-                                                                                           debug_print=sif_debug_print,
-                                                                                           execution_fault_mode_name=sif_execution_fault_mode_name,
-                                                                                           instance_seed=sif_instance_seed,
-                                                                                           fault_probability=sif_fault_probability,
-                                                                                           percent_visible_states=sif_percent_visible_states,
-                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
+                                                                                          ml_model_name=sif_ml_model_name,
+                                                                                          render_mode=sif_render_mode,
+                                                                                          max_exec_len=sif_max_exec_len,
+                                                                                          debug_print=sif_debug_print,
+                                                                                          execution_fault_mode_name=sif_execution_fault_mode_name,
+                                                                                          instance_seed=sif_instance_seed,
+                                                                                          fault_probability=sif_fault_probability,
+                                                                                          percent_visible_states=sif_percent_visible_states,
+                                                                                          possible_fault_mode_names=sif_possible_fault_mode_names,
+                                                                                          num_candidate_fault_modes=sif_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -328,7 +328,7 @@ def single_experiment_Acrobot_SIF2():
 # =================================================================================================
 # =========================================== CartPole ============================================
 # =================================================================================================
-def single_experiment_CartPole_W2():
+def single_experiment_CartPole_W():
     # changable test settings - weak fault model (W)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -348,17 +348,17 @@ def single_experiment_CartPole_W2():
         w_percent_visible_states = 100
         w_possible_fault_mode_names = []
         w_num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W2_single_experiment(domain_name=w_domain_name,
-                                                                                         ml_model_name=w_ml_model_name,
-                                                                                         render_mode=w_render_mode,
-                                                                                         max_exec_len=w_max_exec_len,
-                                                                                         debug_print=w_debug_print,
-                                                                                         execution_fault_mode_name=w_execution_fault_mode_name,
-                                                                                         instance_seed=w_instance_seed,
-                                                                                         fault_probability=w_fault_probability,
-                                                                                         percent_visible_states=w_percent_visible_states,
-                                                                                         possible_fault_mode_names=w_possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=w_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=w_domain_name,
+                                                                                        ml_model_name=w_ml_model_name,
+                                                                                        render_mode=w_render_mode,
+                                                                                        max_exec_len=w_max_exec_len,
+                                                                                        debug_print=w_debug_print,
+                                                                                        execution_fault_mode_name=w_execution_fault_mode_name,
+                                                                                        instance_seed=w_instance_seed,
+                                                                                        fault_probability=w_fault_probability,
+                                                                                        percent_visible_states=w_percent_visible_states,
+                                                                                        possible_fault_mode_names=w_possible_fault_mode_names,
+                                                                                        num_candidate_fault_modes=w_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -374,7 +374,7 @@ def single_experiment_CartPole_W2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_CartPole_SN2():
+def single_experiment_CartPole_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -397,17 +397,17 @@ def single_experiment_CartPole_SN2():
                                         "[1,0]"
                                         ]
         sn_num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN2_single_experiment(domain_name=sn_domain_name,
-                                                                                          ml_model_name=sn_ml_model_name,
-                                                                                          render_mode=sn_render_mode,
-                                                                                          max_exec_len=sn_max_exec_len,
-                                                                                          debug_print=sn_debug_print,
-                                                                                          execution_fault_mode_name=sn_execution_fault_mode_name,
-                                                                                          instance_seed=sn_instance_seed,
-                                                                                          fault_probability=sn_fault_probability,
-                                                                                          percent_visible_states=sn_percent_visible_states,
-                                                                                          possible_fault_mode_names=sn_possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=sn_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
+                                                                                         ml_model_name=sn_ml_model_name,
+                                                                                         render_mode=sn_render_mode,
+                                                                                         max_exec_len=sn_max_exec_len,
+                                                                                         debug_print=sn_debug_print,
+                                                                                         execution_fault_mode_name=sn_execution_fault_mode_name,
+                                                                                         instance_seed=sn_instance_seed,
+                                                                                         fault_probability=sn_fault_probability,
+                                                                                         percent_visible_states=sn_percent_visible_states,
+                                                                                         possible_fault_mode_names=sn_possible_fault_mode_names,
+                                                                                         num_candidate_fault_modes=sn_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -423,7 +423,7 @@ def single_experiment_CartPole_SN2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_CartPole_SIF2():
+def single_experiment_CartPole_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -446,17 +446,17 @@ def single_experiment_CartPole_SIF2():
                                          "[1,0]"
                                          ]
         sif_num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF2_single_experiment(domain_name=sif_domain_name,
-                                                                                           ml_model_name=sif_ml_model_name,
-                                                                                           render_mode=sif_render_mode,
-                                                                                           max_exec_len=sif_max_exec_len,
-                                                                                           debug_print=sif_debug_print,
-                                                                                           execution_fault_mode_name=sif_execution_fault_mode_name,
-                                                                                           instance_seed=sif_instance_seed,
-                                                                                           fault_probability=sif_fault_probability,
-                                                                                           percent_visible_states=sif_percent_visible_states,
-                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
+                                                                                          ml_model_name=sif_ml_model_name,
+                                                                                          render_mode=sif_render_mode,
+                                                                                          max_exec_len=sif_max_exec_len,
+                                                                                          debug_print=sif_debug_print,
+                                                                                          execution_fault_mode_name=sif_execution_fault_mode_name,
+                                                                                          instance_seed=sif_instance_seed,
+                                                                                          fault_probability=sif_fault_probability,
+                                                                                          percent_visible_states=sif_percent_visible_states,
+                                                                                          possible_fault_mode_names=sif_possible_fault_mode_names,
+                                                                                          num_candidate_fault_modes=sif_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -475,7 +475,7 @@ def single_experiment_CartPole_SIF2():
 # =================================================================================================
 # ========================================== MountainCar ==========================================
 # =================================================================================================
-def single_experiment_MountainCar_W2():
+def single_experiment_MountainCar_W():
     # changable test settings - weak fault model (W)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -495,17 +495,17 @@ def single_experiment_MountainCar_W2():
         w_percent_visible_states = 100
         w_possible_fault_mode_names = []
         w_num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W2_single_experiment(domain_name=w_domain_name,
-                                                                                         ml_model_name=w_ml_model_name,
-                                                                                         render_mode=w_render_mode,
-                                                                                         max_exec_len=w_max_exec_len,
-                                                                                         debug_print=w_debug_print,
-                                                                                         execution_fault_mode_name=w_execution_fault_mode_name,
-                                                                                         instance_seed=w_instance_seed,
-                                                                                         fault_probability=w_fault_probability,
-                                                                                         percent_visible_states=w_percent_visible_states,
-                                                                                         possible_fault_mode_names=w_possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=w_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=w_domain_name,
+                                                                                        ml_model_name=w_ml_model_name,
+                                                                                        render_mode=w_render_mode,
+                                                                                        max_exec_len=w_max_exec_len,
+                                                                                        debug_print=w_debug_print,
+                                                                                        execution_fault_mode_name=w_execution_fault_mode_name,
+                                                                                        instance_seed=w_instance_seed,
+                                                                                        fault_probability=w_fault_probability,
+                                                                                        percent_visible_states=w_percent_visible_states,
+                                                                                        possible_fault_mode_names=w_possible_fault_mode_names,
+                                                                                        num_candidate_fault_modes=w_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -521,7 +521,7 @@ def single_experiment_MountainCar_W2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_MountainCar_SN2():
+def single_experiment_MountainCar_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -552,17 +552,17 @@ def single_experiment_MountainCar_SN2():
             "[2,2,2]"
         ]
         sn_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN2_single_experiment(domain_name=sn_domain_name,
-                                                                                          ml_model_name=sn_ml_model_name,
-                                                                                          render_mode=sn_render_mode,
-                                                                                          max_exec_len=sn_max_exec_len,
-                                                                                          debug_print=sn_debug_print,
-                                                                                          execution_fault_mode_name=sn_execution_fault_mode_name,
-                                                                                          instance_seed=sn_instance_seed,
-                                                                                          fault_probability=sn_fault_probability,
-                                                                                          percent_visible_states=sn_percent_visible_states,
-                                                                                          possible_fault_mode_names=sn_possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=sn_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
+                                                                                         ml_model_name=sn_ml_model_name,
+                                                                                         render_mode=sn_render_mode,
+                                                                                         max_exec_len=sn_max_exec_len,
+                                                                                         debug_print=sn_debug_print,
+                                                                                         execution_fault_mode_name=sn_execution_fault_mode_name,
+                                                                                         instance_seed=sn_instance_seed,
+                                                                                         fault_probability=sn_fault_probability,
+                                                                                         percent_visible_states=sn_percent_visible_states,
+                                                                                         possible_fault_mode_names=sn_possible_fault_mode_names,
+                                                                                         num_candidate_fault_modes=sn_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -578,7 +578,7 @@ def single_experiment_MountainCar_SN2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_MountainCar_SIF2():
+def single_experiment_MountainCar_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -609,17 +609,17 @@ def single_experiment_MountainCar_SIF2():
             "[2,2,2]"
         ]
         sif_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF2_single_experiment(domain_name=sif_domain_name,
-                                                                                           ml_model_name=sif_ml_model_name,
-                                                                                           render_mode=sif_render_mode,
-                                                                                           max_exec_len=sif_max_exec_len,
-                                                                                           debug_print=sif_debug_print,
-                                                                                           execution_fault_mode_name=sif_execution_fault_mode_name,
-                                                                                           instance_seed=sif_instance_seed,
-                                                                                           fault_probability=sif_fault_probability,
-                                                                                           percent_visible_states=sif_percent_visible_states,
-                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
+                                                                                          ml_model_name=sif_ml_model_name,
+                                                                                          render_mode=sif_render_mode,
+                                                                                          max_exec_len=sif_max_exec_len,
+                                                                                          debug_print=sif_debug_print,
+                                                                                          execution_fault_mode_name=sif_execution_fault_mode_name,
+                                                                                          instance_seed=sif_instance_seed,
+                                                                                          fault_probability=sif_fault_probability,
+                                                                                          percent_visible_states=sif_percent_visible_states,
+                                                                                          possible_fault_mode_names=sif_possible_fault_mode_names,
+                                                                                          num_candidate_fault_modes=sif_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -638,7 +638,7 @@ def single_experiment_MountainCar_SIF2():
 # =================================================================================================
 # ============================================= Taxi ==============================================
 # =================================================================================================
-def single_experiment_Taxi_W2():
+def single_experiment_Taxi_W():
     # changable test settings - weak fault model (W)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -658,17 +658,17 @@ def single_experiment_Taxi_W2():
         w_percent_visible_states = 100
         w_possible_fault_mode_names = []
         w_num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W2_single_experiment(domain_name=w_domain_name,
-                                                                                         ml_model_name=w_ml_model_name,
-                                                                                         render_mode=w_render_mode,
-                                                                                         max_exec_len=w_max_exec_len,
-                                                                                         debug_print=w_debug_print,
-                                                                                         execution_fault_mode_name=w_execution_fault_mode_name,
-                                                                                         instance_seed=w_instance_seed,
-                                                                                         fault_probability=w_fault_probability,
-                                                                                         percent_visible_states=w_percent_visible_states,
-                                                                                         possible_fault_mode_names=w_possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=w_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=w_domain_name,
+                                                                                        ml_model_name=w_ml_model_name,
+                                                                                        render_mode=w_render_mode,
+                                                                                        max_exec_len=w_max_exec_len,
+                                                                                        debug_print=w_debug_print,
+                                                                                        execution_fault_mode_name=w_execution_fault_mode_name,
+                                                                                        instance_seed=w_instance_seed,
+                                                                                        fault_probability=w_fault_probability,
+                                                                                        percent_visible_states=w_percent_visible_states,
+                                                                                        possible_fault_mode_names=w_possible_fault_mode_names,
+                                                                                        num_candidate_fault_modes=w_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -684,7 +684,7 @@ def single_experiment_Taxi_W2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Taxi_SN2():
+def single_experiment_Taxi_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -715,17 +715,17 @@ def single_experiment_Taxi_SN2():
             "[1,0,2,3,4,5]"
         ]
         sn_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN2_single_experiment(domain_name=sn_domain_name,
-                                                                                          ml_model_name=sn_ml_model_name,
-                                                                                          render_mode=sn_render_mode,
-                                                                                          max_exec_len=sn_max_exec_len,
-                                                                                          debug_print=sn_debug_print,
-                                                                                          execution_fault_mode_name=sn_execution_fault_mode_name,
-                                                                                          instance_seed=sn_instance_seed,
-                                                                                          fault_probability=sn_fault_probability,
-                                                                                          percent_visible_states=sn_percent_visible_states,
-                                                                                          possible_fault_mode_names=sn_possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=sn_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=sn_domain_name,
+                                                                                         ml_model_name=sn_ml_model_name,
+                                                                                         render_mode=sn_render_mode,
+                                                                                         max_exec_len=sn_max_exec_len,
+                                                                                         debug_print=sn_debug_print,
+                                                                                         execution_fault_mode_name=sn_execution_fault_mode_name,
+                                                                                         instance_seed=sn_instance_seed,
+                                                                                         fault_probability=sn_fault_probability,
+                                                                                         percent_visible_states=sn_percent_visible_states,
+                                                                                         possible_fault_mode_names=sn_possible_fault_mode_names,
+                                                                                         num_candidate_fault_modes=sn_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -741,13 +741,13 @@ def single_experiment_Taxi_SN2():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Taxi_SIF2():
+def single_experiment_Taxi_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
     exp_durations_in_ms = []
     exp_memories_at_end = []
     exp_memories_max = []
 
-    NUM_TRIES = 1
+    NUM_TRIES = 10
     for i in range(NUM_TRIES):
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "Taxi_v3"
@@ -772,17 +772,17 @@ def single_experiment_Taxi_SIF2():
             "[1,0,2,3,4,5]"
         ]
         sif_num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF2_single_experiment(domain_name=sif_domain_name,
-                                                                                           ml_model_name=sif_ml_model_name,
-                                                                                           render_mode=sif_render_mode,
-                                                                                           max_exec_len=sif_max_exec_len,
-                                                                                           debug_print=sif_debug_print,
-                                                                                           execution_fault_mode_name=sif_execution_fault_mode_name,
-                                                                                           instance_seed=sif_instance_seed,
-                                                                                           fault_probability=sif_fault_probability,
-                                                                                           percent_visible_states=sif_percent_visible_states,
-                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=sif_domain_name,
+                                                                                          ml_model_name=sif_ml_model_name,
+                                                                                          render_mode=sif_render_mode,
+                                                                                          max_exec_len=sif_max_exec_len,
+                                                                                          debug_print=sif_debug_print,
+                                                                                          execution_fault_mode_name=sif_execution_fault_mode_name,
+                                                                                          instance_seed=sif_instance_seed,
+                                                                                          fault_probability=sif_fault_probability,
+                                                                                          percent_visible_states=sif_percent_visible_states,
+                                                                                          possible_fault_mode_names=sif_possible_fault_mode_names,
+                                                                                          num_candidate_fault_modes=sif_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)

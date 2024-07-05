@@ -8,8 +8,8 @@ import xlsxwriter
 
 from h_common import read_json_data
 from h_fault_model_generator import FaultModelGeneratorDiscrete
-from p_diagnosers import diagnosers, SIF2, SN2, W2
-from p_executor import execute2
+from p_diagnosers import diagnosers, SIF, SN, W
+from p_executor import execute
 
 
 # separating trajectory to actions and states
@@ -55,14 +55,14 @@ def mask_states(observations, observation_mask):
     return masked_observations
 
 
-def single_experiment_prepare_inputs2(domain_name,
-                                      ml_model_name,
-                                      render_mode,
-                                      max_exec_len,
-                                      debug_print,
-                                      execution_fault_mode_name,
-                                      instance_seed,
-                                      fault_probability):
+def single_experiment_prepare_inputs(domain_name,
+                                     ml_model_name,
+                                     render_mode,
+                                     max_exec_len,
+                                     debug_print,
+                                     execution_fault_mode_name,
+                                     instance_seed,
+                                     fault_probability):
     # ### initialize fault model generator
     fault_mode_generator = FaultModelGeneratorDiscrete()
 
@@ -70,15 +70,15 @@ def single_experiment_prepare_inputs2(domain_name,
     trajectory_execution = []
     faulty_actions_indices = []
     while len(faulty_actions_indices) == 0:
-        trajectory_execution, faulty_actions_indices = execute2(domain_name,
-                                                                debug_print,
-                                                                execution_fault_mode_name,
-                                                                instance_seed,
-                                                                fault_probability,
-                                                                render_mode,
-                                                                ml_model_name,
-                                                                fault_mode_generator,
-                                                                max_exec_len)
+        trajectory_execution, faulty_actions_indices = execute(domain_name,
+                                                               debug_print,
+                                                               execution_fault_mode_name,
+                                                               instance_seed,
+                                                               fault_probability,
+                                                               render_mode,
+                                                               ml_model_name,
+                                                               fault_mode_generator,
+                                                               max_exec_len)
 
     # ### separating trajectory to actions and states
     registered_actions, observations = separate_trajectory(trajectory_execution)
@@ -140,7 +140,7 @@ def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
     return output
 
 
-def rank_diagnoses_SFM2(raw_output, registered_actions, debug_print):
+def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
     ranking_start_time = time.time()
     G = raw_output['diagnoses']
     diagnoses = []
@@ -294,7 +294,7 @@ def write_records_to_excel(records, experimental_filename):
             str(list(record_i['output']['diagnoses'])),  # 17_O_diagnoses
             str(list(record_i['output']['ranks'])),  # 18_O_ranks
             len(record_i['output']['diagnoses']),  # 19_O_num_diagnoses
-            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] != "W" and record_i['diagnoser'] != "W2" else "Irrelevant",  # 20_O_correct_diagnosis_rank
+            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] != "W" and record_i['diagnoser'] != "W" else "Irrelevant",  # 20_O_correct_diagnosis_rank
             record_i['output']['diagnosis_runtime_sec'],  # 21_O_diagnosis_runtime_sec
             record_i['output']['diagnosis_runtime_ms'],  # 22_O_diagnosis_runtime_ms
             record_i['output']['ranking_runtime_sec'],  # 23_O_ranking_runtime_sec
@@ -315,31 +315,31 @@ def write_records_to_excel(records, experimental_filename):
     workbook.close()
 
 
-def run_W2_single_experiment(domain_name,
-                             ml_model_name,
-                             render_mode,
-                             max_exec_len,
-                             debug_print,
-                             execution_fault_mode_name,
-                             instance_seed,
-                             fault_probability,
-                             percent_visible_states,
-                             possible_fault_mode_names,
-                             num_candidate_fault_modes
-                             ):
+def run_W_single_experiment(domain_name,
+                            ml_model_name,
+                            render_mode,
+                            max_exec_len,
+                            debug_print,
+                            execution_fault_mode_name,
+                            instance_seed,
+                            fault_probability,
+                            percent_visible_states,
+                            possible_fault_mode_names,
+                            num_candidate_fault_modes
+                            ):
     # ### prepare the records database to be written to the excel file
     records = []
 
     # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for rnking
     fault_mode_generator, trajectory_execution, \
-        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs2(domain_name,
-                                                                                                     ml_model_name,
-                                                                                                     render_mode,
-                                                                                                     max_exec_len,
-                                                                                                     debug_print,
-                                                                                                     execution_fault_mode_name,
-                                                                                                     instance_seed,
-                                                                                                     fault_probability)
+        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                    ml_model_name,
+                                                                                                    render_mode,
+                                                                                                    max_exec_len,
+                                                                                                    debug_print,
+                                                                                                    execution_fault_mode_name,
+                                                                                                    instance_seed,
+                                                                                                    fault_probability)
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -358,7 +358,7 @@ def run_W2_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run W
-    raw_output = W2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = W(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
     output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
@@ -366,7 +366,7 @@ def run_W2_single_experiment(domain_name,
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, [], 0,
                             render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                            {}, output, "W2", longest_hidden_state_sequence)
+                            {}, output, "W", longest_hidden_state_sequence)
     records.append(record)
 
     # ### write records to an excel file
@@ -375,30 +375,30 @@ def run_W2_single_experiment(domain_name,
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 
 
-def run_SN2_single_experiment(domain_name,
-                              ml_model_name,
-                              render_mode,
-                              max_exec_len,
-                              debug_print,
-                              execution_fault_mode_name,
-                              instance_seed,
-                              fault_probability,
-                              percent_visible_states,
-                              possible_fault_mode_names,
-                              num_candidate_fault_modes):
+def run_SN_single_experiment(domain_name,
+                             ml_model_name,
+                             render_mode,
+                             max_exec_len,
+                             debug_print,
+                             execution_fault_mode_name,
+                             instance_seed,
+                             fault_probability,
+                             percent_visible_states,
+                             possible_fault_mode_names,
+                             num_candidate_fault_modes):
     # ### prepare the records database to be written to the excel file
     records = []
 
     # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for rnking
     fault_mode_generator, trajectory_execution, \
-        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs2(domain_name,
-                                                                                                     ml_model_name,
-                                                                                                     render_mode,
-                                                                                                     max_exec_len,
-                                                                                                     debug_print,
-                                                                                                     execution_fault_mode_name,
-                                                                                                     instance_seed,
-                                                                                                     fault_probability)
+        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                    ml_model_name,
+                                                                                                    render_mode,
+                                                                                                    max_exec_len,
+                                                                                                    debug_print,
+                                                                                                    execution_fault_mode_name,
+                                                                                                    instance_seed,
+                                                                                                    fault_probability)
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -417,15 +417,15 @@ def run_SN2_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run SN
-    raw_output = SN2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = SN(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
-    output = rank_diagnoses_SFM2(raw_output, registered_actions, debug_print)
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
                             render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                            candidate_fault_modes, output, "SN2", longest_hidden_state_sequence)
+                            candidate_fault_modes, output, "SN", longest_hidden_state_sequence)
     records.append(record)
 
     # ### write records to an excel file
@@ -434,30 +434,30 @@ def run_SN2_single_experiment(domain_name,
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 
 
-def run_SIF2_single_experiment(domain_name,
-                               ml_model_name,
-                               render_mode,
-                               max_exec_len,
-                               debug_print,
-                               execution_fault_mode_name,
-                               instance_seed,
-                               fault_probability,
-                               percent_visible_states,
-                               possible_fault_mode_names,
-                               num_candidate_fault_modes):
+def run_SIF_single_experiment(domain_name,
+                              ml_model_name,
+                              render_mode,
+                              max_exec_len,
+                              debug_print,
+                              execution_fault_mode_name,
+                              instance_seed,
+                              fault_probability,
+                              percent_visible_states,
+                              possible_fault_mode_names,
+                              num_candidate_fault_modes):
     # ### prepare the records database to be written to the excel file
     records = []
 
     # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for rnking
     fault_mode_generator, trajectory_execution, \
-        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs2(domain_name,
-                                                                                                     ml_model_name,
-                                                                                                     render_mode,
-                                                                                                     max_exec_len,
-                                                                                                     debug_print,
-                                                                                                     execution_fault_mode_name,
-                                                                                                     instance_seed,
-                                                                                                     fault_probability)
+        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                    ml_model_name,
+                                                                                                    render_mode,
+                                                                                                    max_exec_len,
+                                                                                                    debug_print,
+                                                                                                    execution_fault_mode_name,
+                                                                                                    instance_seed,
+                                                                                                    fault_probability)
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -476,15 +476,15 @@ def run_SIF2_single_experiment(domain_name,
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
     # ### run SIF
-    raw_output = SIF2(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    raw_output = SIF(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
-    output = rank_diagnoses_SFM2(raw_output, registered_actions, debug_print)
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
                             render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                            candidate_fault_modes, output, "SIF2", longest_hidden_state_sequence)
+                            candidate_fault_modes, output, "SIF", longest_hidden_state_sequence)
     records.append(record)
 
     # ### write records to an excel file
@@ -493,7 +493,7 @@ def run_SIF2_single_experiment(domain_name,
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 
 
-def run_experimental_setup2(arguments, render_mode, debug_print):
+def run_experimental_setup(arguments, render_mode, debug_print):
     # ### parameters dictionary
     experimental_file_name = arguments[1]
     param_dict = read_json_data(f"experimental inputs/{experimental_file_name}")
@@ -517,14 +517,14 @@ def run_experimental_setup2(arguments, render_mode, debug_print):
             for instance_seed_i, instance_seed in enumerate(param_dict['instance_seeds']):
                 # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for ranking
                 fault_mode_generator, trajectory_execution, \
-                    faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs2(domain_name,
-                                                                                                                 ml_model_name,
-                                                                                                                 render_mode,
-                                                                                                                 max_exec_len,
-                                                                                                                 debug_print,
-                                                                                                                 execution_fault_mode_name,
-                                                                                                                 instance_seed,
-                                                                                                                 fault_probability)
+                    faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                                ml_model_name,
+                                                                                                                render_mode,
+                                                                                                                max_exec_len,
+                                                                                                                debug_print,
+                                                                                                                execution_fault_mode_name,
+                                                                                                                instance_seed,
+                                                                                                                fault_probability)
                 for percent_visible_states_i, percent_visible_states in enumerate(param_dict['percent_visible_states']):
                     # ### generate observation mask
                     observation_mask = generate_observation_mask(len(observations), percent_visible_states)
@@ -553,10 +553,10 @@ def run_experimental_setup2(arguments, render_mode, debug_print):
                         raw_output = diagnoser(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
                         # ### ranking the diagnoses
-                        if param_dict["diagnoser_name"] == "W2":
+                        if param_dict["diagnoser_name"] == "W":
                             output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
                         else:
-                            output = rank_diagnoses_SFM2(raw_output, registered_actions, debug_print)
+                            output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
 
                         # ### preparing record for writing to excel file
                         record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, param_dict['possible_fault_mode_names'], num_candidate_fault_modes,
