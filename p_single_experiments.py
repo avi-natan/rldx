@@ -1,6 +1,7 @@
 import math
+from datetime import datetime
 
-from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment
+from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment, run_SIFS_single_experiment
 
 
 # =================================================================================================
@@ -275,7 +276,7 @@ def single_experiment_Acrobot_SIF():
     exp_memories_at_end = []
     exp_memories_max = []
 
-    NUM_TRIES = 10
+    NUM_TRIES = 1
     for i in range(NUM_TRIES):
         print(f'try {i}/{NUM_TRIES}')
         sif_domain_name = "Acrobot_v1"
@@ -310,6 +311,62 @@ def single_experiment_Acrobot_SIF():
                                                                                           percent_visible_states=sif_percent_visible_states,
                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_durations_in_ms.append(exp_duration_in_ms)
+        exp_memories_at_end.append(exp_memory_at_end)
+        exp_memories_max.append(exp_memory_max)
+
+    for e in exp_durations_in_ms:
+        print(math.floor(e))
+    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
+    for e in exp_memories_at_end:
+        print(math.floor(e))
+    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
+    for e in exp_memories_max:
+        print(math.floor(e))
+    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+
+
+def single_experiment_Acrobot_SIFS():
+    # changable test settings - strong fault model intermittent faults smart (SIFS)
+    exp_durations_in_ms = []
+    exp_memories_at_end = []
+    exp_memories_max = []
+
+    NUM_TRIES = 1
+    for i in range(NUM_TRIES):
+        print(f'try {i}/{NUM_TRIES}')
+        sifs_domain_name = "Acrobot_v1"
+        sifs_ml_model_name = "PPO"  # "PPO", "DQN"
+        sifs_render_mode = "rgb_array"  # "human", "rgb_array"
+        sifs_max_exec_len = 200
+        sifs_debug_print = False
+        sifs_execution_fault_mode_name = "[1,1,2]"
+        sifs_instance_seed = 42
+        sifs_fault_probability = 1.0
+        sifs_percent_visible_states = 100
+        sifs_possible_fault_mode_names = ["[1,1,2]",
+                                          "[0,1,1]",
+                                          "[0,2,1]",
+                                          "[1,0,2]",
+                                          "[1,2,0]",
+                                          "[2,0,1]",
+                                          "[2,1,0]",
+                                          "[0,0,0]",
+                                          "[1,1,1]",
+                                          "[2,2,2]"
+                                          ]
+        sifs_num_candidate_fault_modes = 10
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=sifs_domain_name,
+                                                                                           ml_model_name=sifs_ml_model_name,
+                                                                                           render_mode=sifs_render_mode,
+                                                                                           max_exec_len=sifs_max_exec_len,
+                                                                                           debug_print=sifs_debug_print,
+                                                                                           execution_fault_mode_name=sifs_execution_fault_mode_name,
+                                                                                           instance_seed=sifs_instance_seed,
+                                                                                           fault_probability=sifs_fault_probability,
+                                                                                           percent_visible_states=sifs_percent_visible_states,
+                                                                                           possible_fault_mode_names=sifs_possible_fault_mode_names,
+                                                                                           num_candidate_fault_modes=sifs_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -440,7 +497,7 @@ def single_experiment_CartPole_SIF():
         sif_execution_fault_mode_name = "[0,0]"
         sif_instance_seed = 42
         sif_fault_probability = 1.0
-        sif_percent_visible_states = 0
+        sif_percent_visible_states = 100
         sif_possible_fault_mode_names = ["[0,0]",
                                          "[1,1]",
                                          "[1,0]"
@@ -457,6 +514,55 @@ def single_experiment_CartPole_SIF():
                                                                                           percent_visible_states=sif_percent_visible_states,
                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_durations_in_ms.append(exp_duration_in_ms)
+        exp_memories_at_end.append(exp_memory_at_end)
+        exp_memories_max.append(exp_memory_max)
+
+    for e in exp_durations_in_ms:
+        print(math.floor(e))
+    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
+    for e in exp_memories_at_end:
+        print(math.floor(e))
+    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
+    for e in exp_memories_max:
+        print(math.floor(e))
+    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+
+
+def single_experiment_CartPole_SIFS():
+    # changable test settings - strong fault model intermittent faults smart (SIFS)
+    exp_durations_in_ms = []
+    exp_memories_at_end = []
+    exp_memories_max = []
+
+    NUM_TRIES = 10
+    for i in range(NUM_TRIES):
+        print(f'try {i}/{NUM_TRIES}')
+        sifs_domain_name = "CartPole_v1"
+        sifs_ml_model_name = "PPO"  # "PPO", "DQN"
+        sifs_render_mode = "rgb_array"  # "human", "rgb_array"
+        sifs_max_exec_len = 200
+        sifs_debug_print = False
+        sifs_execution_fault_mode_name = "[0,0]"
+        sifs_instance_seed = 42
+        sifs_fault_probability = 1.0
+        sifs_percent_visible_states = 100
+        sifs_possible_fault_mode_names = ["[0,0]",
+                                          "[1,1]",
+                                          "[1,0]"
+                                          ]
+        sifs_num_candidate_fault_modes = 3
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=sifs_domain_name,
+                                                                                           ml_model_name=sifs_ml_model_name,
+                                                                                           render_mode=sifs_render_mode,
+                                                                                           max_exec_len=sifs_max_exec_len,
+                                                                                           debug_print=sifs_debug_print,
+                                                                                           execution_fault_mode_name=sifs_execution_fault_mode_name,
+                                                                                           instance_seed=sifs_instance_seed,
+                                                                                           fault_probability=sifs_fault_probability,
+                                                                                           percent_visible_states=sifs_percent_visible_states,
+                                                                                           possible_fault_mode_names=sifs_possible_fault_mode_names,
+                                                                                           num_candidate_fault_modes=sifs_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)
@@ -635,6 +741,65 @@ def single_experiment_MountainCar_SIF():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
+def single_experiment_MountainCar_SIFS():
+    # changable test settings - strong fault model intermittent faults (SIFS)
+    exp_durations_in_ms = []
+    exp_memories_at_end = []
+    exp_memories_max = []
+
+    NUM_TRIES = 10
+    for i in range(NUM_TRIES):
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        print(f'{dt_string}: try {i}/{NUM_TRIES}')
+        sifs_domain_name = "MountainCar_v0"
+        sifs_ml_model_name = "DQN"                         # "PPO", "DQN"
+        sifs_render_mode = "rgb_array"                     # "human", "rgb_array"
+        sifs_max_exec_len = 200
+        sifs_debug_print = False
+        sifs_execution_fault_mode_name = "[1,1,2]"
+        sifs_instance_seed = 42
+        sifs_fault_probability = 1.0
+        sifs_percent_visible_states = 100
+        sifs_possible_fault_mode_names = [
+            "[1,1,2]",
+            "[0,1,1]",
+            "[0,2,1]",
+            "[1,0,2]",
+            "[1,2,0]",
+            "[2,0,1]",
+            "[2,1,0]",
+            "[0,0,0]",
+            "[1,1,1]",
+            "[2,2,2]"
+        ]
+        sifs_num_candidate_fault_modes = 10
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=sifs_domain_name,
+                                                                                           ml_model_name=sifs_ml_model_name,
+                                                                                           render_mode=sifs_render_mode,
+                                                                                           max_exec_len=sifs_max_exec_len,
+                                                                                           debug_print=sifs_debug_print,
+                                                                                           execution_fault_mode_name=sifs_execution_fault_mode_name,
+                                                                                           instance_seed=sifs_instance_seed,
+                                                                                           fault_probability=sifs_fault_probability,
+                                                                                           percent_visible_states=sifs_percent_visible_states,
+                                                                                           possible_fault_mode_names=sifs_possible_fault_mode_names,
+                                                                                           num_candidate_fault_modes=sifs_num_candidate_fault_modes)
+        exp_durations_in_ms.append(exp_duration_in_ms)
+        exp_memories_at_end.append(exp_memory_at_end)
+        exp_memories_max.append(exp_memory_max)
+
+    for e in exp_durations_in_ms:
+        print(math.floor(e))
+    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
+    for e in exp_memories_at_end:
+        print(math.floor(e))
+    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
+    for e in exp_memories_max:
+        print(math.floor(e))
+    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+
+
 # =================================================================================================
 # ============================================= Taxi ==============================================
 # =================================================================================================
@@ -783,6 +948,63 @@ def single_experiment_Taxi_SIF():
                                                                                           percent_visible_states=sif_percent_visible_states,
                                                                                           possible_fault_mode_names=sif_possible_fault_mode_names,
                                                                                           num_candidate_fault_modes=sif_num_candidate_fault_modes)
+        exp_durations_in_ms.append(exp_duration_in_ms)
+        exp_memories_at_end.append(exp_memory_at_end)
+        exp_memories_max.append(exp_memory_max)
+
+    for e in exp_durations_in_ms:
+        print(math.floor(e))
+    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
+    for e in exp_memories_at_end:
+        print(math.floor(e))
+    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
+    for e in exp_memories_max:
+        print(math.floor(e))
+    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+
+
+def single_experiment_Taxi_SIFS():
+    # changable test settings - strong fault model intermittent faults (SIFS)
+    exp_durations_in_ms = []
+    exp_memories_at_end = []
+    exp_memories_max = []
+
+    NUM_TRIES = 10
+    for i in range(NUM_TRIES):
+        print(f'try {i}/{NUM_TRIES}')
+        sifs_domain_name = "Taxi_v3"
+        sifs_ml_model_name = "PPO"                         # "PPO", "DQN"
+        sifs_render_mode = "rgb_array"                     # "human", "rgb_array"
+        sifs_max_exec_len = 200
+        sifs_debug_print = False
+        sifs_execution_fault_mode_name = "[0,0,2,3,4,5]"
+        sifs_instance_seed = 42
+        sifs_fault_probability = 1.0
+        sifs_percent_visible_states = 100
+        sifs_possible_fault_mode_names = [
+            "[0,0,2,3,4,5]",
+            "[0,1,0,3,4,5]",
+            "[0,1,2,0,4,5]",
+            "[0,1,2,3,0,5]",
+            "[0,1,2,3,4,0]",
+            "[0,2,1,3,4,5]",
+            "[0,3,2,1,4,5]",
+            "[0,4,2,3,1,5]",
+            "[0,5,2,3,4,1]",
+            "[1,0,2,3,4,5]"
+        ]
+        sifs_num_candidate_fault_modes = 10
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=sifs_domain_name,
+                                                                                           ml_model_name=sifs_ml_model_name,
+                                                                                           render_mode=sifs_render_mode,
+                                                                                           max_exec_len=sifs_max_exec_len,
+                                                                                           debug_print=sifs_debug_print,
+                                                                                           execution_fault_mode_name=sifs_execution_fault_mode_name,
+                                                                                           instance_seed=sifs_instance_seed,
+                                                                                           fault_probability=sifs_fault_probability,
+                                                                                           percent_visible_states=sifs_percent_visible_states,
+                                                                                           possible_fault_mode_names=sifs_possible_fault_mode_names,
+                                                                                           num_candidate_fault_modes=sifs_num_candidate_fault_modes)
         exp_durations_in_ms.append(exp_duration_in_ms)
         exp_memories_at_end.append(exp_memory_at_end)
         exp_memories_max.append(exp_memory_max)

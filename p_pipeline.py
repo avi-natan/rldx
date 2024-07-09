@@ -8,7 +8,7 @@ import xlsxwriter
 
 from h_common import read_json_data
 from h_fault_model_generator import FaultModelGeneratorDiscrete
-from p_diagnosers import diagnosers, SIF, SN, W
+from p_diagnosers import diagnosers, SIF, SN, W, SIFS
 from p_executor import execute
 
 
@@ -150,14 +150,16 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
         actions_j = G[key_j][1]
         num_actual_faults = 0
         for i in range(len(actions_j)):
-            if registered_actions[i] != actions_j[i]:
-                num_actual_faults += 1
+            if actions_j[i] is not None:
+                if registered_actions[i] != actions_j[i]:
+                    num_actual_faults += 1
         num_potential_faults = 0
         for i in range(len(actions_j)):
-            a = registered_actions[i]
-            fa = G[key_j][0](a)
-            if a != fa:
-                num_potential_faults += 1
+            if actions_j[i] is not None:
+                a = registered_actions[i]
+                fa = G[key_j][0](a)
+                if a != fa:
+                    num_potential_faults += 1
 
         if debug_print:
             print(f'num_actual_faults / num_potential_faults: {num_actual_faults} / {num_potential_faults}')
@@ -489,6 +491,65 @@ def run_SIF_single_experiment(domain_name,
 
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIF")
+
+    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+
+
+def run_SIFS_single_experiment(domain_name,
+                               ml_model_name,
+                               render_mode,
+                               max_exec_len,
+                               debug_print,
+                               execution_fault_mode_name,
+                               instance_seed,
+                               fault_probability,
+                               percent_visible_states,
+                               possible_fault_mode_names,
+                               num_candidate_fault_modes):
+    # ### prepare the records database to be written to the excel file
+    records = []
+
+    # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for rnking
+    fault_mode_generator, trajectory_execution, \
+        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                    ml_model_name,
+                                                                                                    render_mode,
+                                                                                                    max_exec_len,
+                                                                                                    debug_print,
+                                                                                                    execution_fault_mode_name,
+                                                                                                    instance_seed,
+                                                                                                    fault_probability)
+    print(f'faulty actions indices: {faulty_actions_indices}')
+
+    # ### generate observation mask
+    observation_mask = generate_observation_mask(len(observations), percent_visible_states)
+    # ### calculate largest hidden gap
+    longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
+    print(f'OBSERVATION MASK: {str(observation_mask)}')
+    print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
+    print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
+    print(f'observed {len(observation_mask)}/{len(observations)} states')
+
+    # ### mask the states list
+    masked_observations = mask_states(observations, observation_mask)
+
+    # ### prepare candidate fault modes
+    candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
+
+    # ### run SIF
+    raw_output = SIFS(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+
+    # ### ranking the diagnoses
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
+
+    # ### preparing record for writing to excel file
+    record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
+                            render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
+                            candidate_fault_modes, output, "SIFS", longest_hidden_state_sequence)
+    records.append(record)
+
+    # ### write records to an excel file
+    write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFS")
 
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 
