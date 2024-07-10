@@ -15,8 +15,6 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
-    # welcome message
-    print(f'diagnosing with diagnoser: W\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -78,8 +76,6 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
-    # welcome message
-    print(f'diagnosing with diagnoser: SN\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -174,8 +170,6 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
-    # welcome message
-    print(f'diagnosing with diagnoser: SIF\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
@@ -355,8 +349,6 @@ def SIFS(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
-    # welcome message
-    print(f'diagnosing with diagnoser: SIFS\n========================================================================================')
 
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"

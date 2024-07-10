@@ -591,6 +591,7 @@ def run_experimental_setup(arguments, render_mode, debug_print):
                     observation_mask = generate_observation_mask(len(observations), percent_visible_states)
                     # ### calculate largest hidden gap
                     longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
+                    print(f'PERCENT VISIBLE STATES: {str(percent_visible_states)}')
                     print(f'OBSERVATION MASK: {str(observation_mask)}')
                     print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
                     print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
@@ -605,6 +606,7 @@ def run_experimental_setup(arguments, render_mode, debug_print):
                         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
                         print(f"{dt_string}: {current_instance_number}/{len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'])}")
                         print(f"execution_fault_mode_name: {execution_fault_mode_name}, fault_probability: {fault_probability}, instance_seed: {instance_seed}, percent_visible_states: {percent_visible_states}, num_candidate_fault_modes: {num_candidate_fault_modes}")
+                        print(f"{param_dict['diagnoser_name']}\n")
 
                         # ### prepare candidate fault modes
                         candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, param_dict['possible_fault_mode_names'], fault_mode_generator)
