@@ -8,7 +8,7 @@ import xlsxwriter
 
 from h_common import read_json_data
 from h_fault_model_generator import FaultModelGeneratorDiscrete
-from p_diagnosers import diagnosers, SIF, SN, W, SIFS, SIFU2
+from p_diagnosers import diagnosers, SIF, SN, W, SIFU, SIFU2
 from p_executor import execute
 
 
@@ -296,14 +296,14 @@ def write_records_to_excel(records, experimental_filename):
             str(list(record_i['output']['diagnoses'])),  # 17_O_diagnoses
             str(list(record_i['output']['ranks'])),  # 18_O_ranks
             len(record_i['output']['diagnoses']),  # 19_O_num_diagnoses
-            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] != "W" and record_i['diagnoser'] != "W" else "Irrelevant",  # 20_O_correct_diagnosis_rank
+            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] in {"SN", "SIF", "SIFU", "SIFU2"} else "Irrelevant",  # 20_O_correct_diagnosis_rank
             record_i['output']['diagnosis_runtime_sec'],  # 21_O_diagnosis_runtime_sec
             record_i['output']['diagnosis_runtime_ms'],  # 22_O_diagnosis_runtime_ms
             record_i['output']['ranking_runtime_sec'],  # 23_O_ranking_runtime_sec
             record_i['output']['ranking_runtime_ms'],  # 24_O_ranking_runtime_ms
             record_i['output']['diagnosis_runtime_sec'] + record_i['output']['ranking_runtime_sec'],  # 25_O_total_runtime_sec
             record_i['output']['diagnosis_runtime_ms'] + record_i['output']['ranking_runtime_ms'],  # 26_O_total_runtime_ms
-            record_i['output']['G_max_size'] if record_i['diagnoser'] == "SIF" else "Irrelevant",  # 27_O_G_max_size
+            record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2"} else "Irrelevant",  # 27_O_G_max_size
             record_i['longest_hidden_state_sequence'],  # 28_O_longest_hidden_state_sequence
             record_i['output']['exp_duration_sec'],  # 29_D_exp_duration_sec
             record_i['output']['exp_duration_ms'],  # 30_D_exp_duration_ms
@@ -495,7 +495,7 @@ def run_SIF_single_experiment(domain_name,
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 
 
-def run_SIFS_single_experiment(domain_name,
+def run_SIFU_single_experiment(domain_name,
                                ml_model_name,
                                render_mode,
                                max_exec_len,
@@ -536,8 +536,8 @@ def run_SIFS_single_experiment(domain_name,
     # ### prepare candidate fault modes
     candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
 
-    # ### run SIF
-    raw_output = SIFS(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+    # ### run SIFU
+    raw_output = SIFU(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
 
     # ### ranking the diagnoses
     output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
@@ -545,11 +545,11 @@ def run_SIFS_single_experiment(domain_name,
     # ### preparing record for writing to excel file
     record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
                             render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
-                            candidate_fault_modes, output, "SIFS", longest_hidden_state_sequence)
+                            candidate_fault_modes, output, "SIFU", longest_hidden_state_sequence)
     records.append(record)
 
     # ### write records to an excel file
-    write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFS")
+    write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU")
 
     return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
 

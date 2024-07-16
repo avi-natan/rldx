@@ -326,7 +326,7 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
     return raw_output
 
 
-def SIFS(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
+def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
     # starting the monitoring
     tracemalloc.start()
     exp_rt_begin = time.time()
@@ -705,6 +705,6 @@ diagnosers = {
     "W": W,
     "SN": SN,
     "SIF": SIF,
-    "SIFS": SIFS,
+    "SIFU": SIFU,
     "SIFU2": SIFU2
 }

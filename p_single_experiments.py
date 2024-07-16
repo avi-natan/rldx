@@ -1,7 +1,7 @@
 import math
 from datetime import datetime
 
-from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment, run_SIFS_single_experiment, run_SIFU2_single_experiment
+from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment, run_SIFU_single_experiment, run_SIFU2_single_experiment
 
 
 # =================================================================================================
@@ -342,7 +342,7 @@ def single_experiment_Acrobot_SIF():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Acrobot_SIFS():
+def single_experiment_Acrobot_SIFU():
     # changable test settings - strong fault model intermittent faults smart (SIFS)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -375,7 +375,7 @@ def single_experiment_Acrobot_SIFS():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
                                                                                            ml_model_name=ml_model_name,
                                                                                            render_mode=render_mode,
                                                                                            max_exec_len=max_exec_len,
@@ -615,7 +615,7 @@ def single_experiment_CartPole_SIF():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_CartPole_SIFS():
+def single_experiment_CartPole_SIFU():
     # changable test settings - strong fault model intermittent faults smart (SIFS)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -641,7 +641,7 @@ def single_experiment_CartPole_SIFS():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
                                                                                            ml_model_name=ml_model_name,
                                                                                            render_mode=render_mode,
                                                                                            max_exec_len=max_exec_len,
@@ -888,7 +888,7 @@ def single_experiment_MountainCar_SIF():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_MountainCar_SIFS():
+def single_experiment_MountainCar_SIFU():
     # changable test settings - strong fault model intermittent faults (SIFS)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -921,7 +921,7 @@ def single_experiment_MountainCar_SIFS():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
                                                                                            ml_model_name=ml_model_name,
                                                                                            render_mode=render_mode,
                                                                                            max_exec_len=max_exec_len,
@@ -1175,7 +1175,7 @@ def single_experiment_Taxi_SIF():
     print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
 
 
-def single_experiment_Taxi_SIFS():
+def single_experiment_Taxi_SIFU():
     # changable test settings - strong fault model intermittent faults (SIFS)
     exp_durations_in_ms = []
     exp_memories_at_end = []
@@ -1208,7 +1208,7 @@ def single_experiment_Taxi_SIFS():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFS_single_experiment(domain_name=domain_name,
+        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
                                                                                            ml_model_name=ml_model_name,
                                                                                            render_mode=render_mode,
                                                                                            max_exec_len=max_exec_len,
