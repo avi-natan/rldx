@@ -128,10 +128,6 @@ def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
         "diagnoses": diagnoses,
         "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
         "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
-        "exp_duration_sec": raw_output['exp_duration_sec'],
-        "exp_duration_ms": raw_output['exp_duration_ms'],
-        "exp_memory_at_end": raw_output['exp_memory_at_end'],
-        "exp_memory_max": raw_output['exp_memory_max'],
         "G_max_size": raw_output['G_max_size'],
         "ranks": ranks,
         "ranking_runtime_sec": ranking_runtime_sec,
@@ -185,10 +181,6 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
         "diagnoses": diagnoses,
         "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
         "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
-        "exp_duration_sec": raw_output['exp_duration_sec'],
-        "exp_duration_ms": raw_output['exp_duration_ms'],
-        "exp_memory_at_end": raw_output['exp_memory_at_end'],
-        "exp_memory_max": raw_output['exp_memory_max'],
         "G_max_size": raw_output['G_max_size'],
         "ranks": ranks,
         "ranking_runtime_sec": ranking_runtime_sec,
@@ -267,11 +259,7 @@ def write_records_to_excel(records, experimental_filename):
         {'header': '25_O_total_runtime_sec'},
         {'header': '26_O_total_runtime_ms'},
         {'header': '27_O_G_max_size'},
-        {'header': '28_O_longest_hidden_state_sequence'},
-        {'header': '29_D_exp_duration_sec'},
-        {'header': '30_D_exp_duration_ms'},
-        {'header': '31_D_exp_memory_at_end'},
-        {'header': '32_D_exp_memory_max'}
+        {'header': '28_O_longest_hidden_state_sequence'}
     ]
     rows = []
     for i in range(len(records)):
@@ -304,11 +292,7 @@ def write_records_to_excel(records, experimental_filename):
             record_i['output']['diagnosis_runtime_sec'] + record_i['output']['ranking_runtime_sec'],  # 25_O_total_runtime_sec
             record_i['output']['diagnosis_runtime_ms'] + record_i['output']['ranking_runtime_ms'],  # 26_O_total_runtime_ms
             record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 27_O_G_max_size
-            record_i['longest_hidden_state_sequence'],  # 28_O_longest_hidden_state_sequence
-            record_i['output']['exp_duration_sec'],  # 29_D_exp_duration_sec
-            record_i['output']['exp_duration_ms'],  # 30_D_exp_duration_ms
-            record_i['output']['exp_memory_at_end'],  # 31_D_exp_memory_at_end
-            record_i['output']['exp_memory_max']  # 32_D_exp_memory_max
+            record_i['longest_hidden_state_sequence']  # 28_O_longest_hidden_state_sequence
         ]
         rows.append(row)
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_filename.replace('/', '_')}.xlsx")
@@ -342,6 +326,7 @@ def run_W_single_experiment(domain_name,
                                                                                                     execution_fault_mode_name,
                                                                                                     instance_seed,
                                                                                                     fault_probability)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -374,7 +359,7 @@ def run_W_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_W")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_SN_single_experiment(domain_name,
@@ -401,6 +386,7 @@ def run_SN_single_experiment(domain_name,
                                                                                                     execution_fault_mode_name,
                                                                                                     instance_seed,
                                                                                                     fault_probability)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -433,7 +419,7 @@ def run_SN_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SN")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_SIF_single_experiment(domain_name,
@@ -460,6 +446,7 @@ def run_SIF_single_experiment(domain_name,
                                                                                                     execution_fault_mode_name,
                                                                                                     instance_seed,
                                                                                                     fault_probability)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -492,7 +479,7 @@ def run_SIF_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIF")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_SIFU_single_experiment(domain_name,
@@ -519,6 +506,7 @@ def run_SIFU_single_experiment(domain_name,
                                                                                                     execution_fault_mode_name,
                                                                                                     instance_seed,
                                                                                                     fault_probability)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
     print(f'faulty actions indices: {faulty_actions_indices}')
 
     # ### generate observation mask
@@ -551,7 +539,7 @@ def run_SIFU_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_SIFU2_single_experiment(domain_name,
@@ -611,7 +599,7 @@ def run_SIFU2_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU2")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_SIFU3_single_experiment(domain_name,
@@ -671,7 +659,7 @@ def run_SIFU3_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU3")
 
-    return raw_output["exp_duration_ms"], raw_output["exp_memory_at_end"], raw_output["exp_memory_max"]
+    return raw_output["diagnosis_runtime_ms"]
 
 
 def run_experimental_setup(arguments, render_mode, debug_print):

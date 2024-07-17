@@ -1,6 +1,5 @@
 import copy
 import time
-import tracemalloc
 
 import gym
 
@@ -12,10 +11,6 @@ from h_wrappers import wrappers
 
 
 def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -50,22 +45,10 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
     diagnosis_runtime_sec = diagnosis_end_time - diagnosis_start_time
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     output = {
         "diagnoses": D,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size":0
     }
 
@@ -73,10 +56,6 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
 
 
 def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -135,22 +114,10 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     # finilizing the runtime in ms
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     raw_output = {
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size": len(candidate_fault_modes)
     }
 
@@ -167,10 +134,6 @@ def fm_and_state_in_set(key_raw, state, FG):
 
 
 def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -304,22 +267,10 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
     # finilizing the runtime in ms
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     raw_output = {
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size": G_max_size
     }
 
@@ -327,10 +278,6 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
 
 
 def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -485,22 +432,10 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
     # finilizing the runtime in ms
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     raw_output = {
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size": G_max_size
     }
 
@@ -508,10 +443,6 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
 
 
 def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -678,22 +609,10 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
     # finilizing the runtime in ms
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     raw_output = {
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size": G_max_size
     }
 
@@ -701,10 +620,6 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
 
 
 def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, observations, candidate_fault_modes):
-    # starting the monitoring
-    tracemalloc.start()
-    exp_rt_begin = time.time()
-
     # load trained model as policy
     models_dir = f"environments/{domain_name}/models/{ml_model_name}"
     model_path = f"{models_dir}/{domain_name}__{ml_model_name}.zip"
@@ -897,22 +812,10 @@ def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
     # finilizing the runtime in ms
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
-    exp_rt_end = time.time()
-    exp_duration_sec = exp_rt_end - exp_rt_begin
-    exp_duration_ms = exp_duration_sec * 1000
-
-    memory_tracked = tracemalloc.get_traced_memory()
-    # stopping the library
-    tracemalloc.stop()
-
     raw_output = {
         "diagnoses": G,
         "diagnosis_runtime_sec": diagnosis_runtime_sec,
         "diagnosis_runtime_ms": diagnosis_runtime_ms,
-        "exp_duration_sec": exp_duration_sec,
-        "exp_duration_ms": exp_duration_ms,
-        "exp_memory_at_end": memory_tracked[0],
-        "exp_memory_max": memory_tracked[1],
         "G_max_size": G_max_size
     }
 

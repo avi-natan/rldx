@@ -9,9 +9,7 @@ from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_
 # =================================================================================================
 def single_experiment_LunarLander_W():
     # changable test settings - weak fault model (W)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -29,37 +27,27 @@ def single_experiment_LunarLander_W():
         percent_visible_states = 100
         possible_fault_mode_names = []
         num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=domain_name,
-                                                                                        ml_model_name=ml_model_name,
-                                                                                        render_mode=render_mode,
-                                                                                        max_exec_len=max_exec_len,
-                                                                                        debug_print=debug_print,
-                                                                                        execution_fault_mode_name=execution_fault_mode_name,
-                                                                                        instance_seed=instance_seed,
-                                                                                        fault_probability=fault_probability,
-                                                                                        percent_visible_states=percent_visible_states,
-                                                                                        possible_fault_mode_names=possible_fault_mode_names,
-                                                                                        num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_W_single_experiment(domain_name=domain_name,
+                                                       ml_model_name=ml_model_name,
+                                                       render_mode=render_mode,
+                                                       max_exec_len=max_exec_len,
+                                                       debug_print=debug_print,
+                                                       execution_fault_mode_name=execution_fault_mode_name,
+                                                       instance_seed=instance_seed,
+                                                       fault_probability=fault_probability,
+                                                       percent_visible_states=percent_visible_states,
+                                                       possible_fault_mode_names=possible_fault_mode_names,
+                                                       num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_LunarLander_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -88,37 +76,27 @@ def single_experiment_LunarLander_SN():
             "[0,1,3,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=domain_name,
-                                                                                         ml_model_name=ml_model_name,
-                                                                                         render_mode=render_mode,
-                                                                                         max_exec_len=max_exec_len,
-                                                                                         debug_print=debug_print,
-                                                                                         execution_fault_mode_name=execution_fault_mode_name,
-                                                                                         instance_seed=instance_seed,
-                                                                                         fault_probability=fault_probability,
-                                                                                         percent_visible_states=percent_visible_states,
-                                                                                         possible_fault_mode_names=possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SN_single_experiment(domain_name=domain_name,
+                                                        ml_model_name=ml_model_name,
+                                                        render_mode=render_mode,
+                                                        max_exec_len=max_exec_len,
+                                                        debug_print=debug_print,
+                                                        execution_fault_mode_name=execution_fault_mode_name,
+                                                        instance_seed=instance_seed,
+                                                        fault_probability=fault_probability,
+                                                        percent_visible_states=percent_visible_states,
+                                                        possible_fault_mode_names=possible_fault_mode_names,
+                                                        num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_LunarLander_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 1
     for i in range(NUM_TRIES):
@@ -147,30 +125,22 @@ def single_experiment_LunarLander_SIF():
             "[0,1,3,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=domain_name,
-                                                                                          ml_model_name=ml_model_name,
-                                                                                          render_mode=render_mode,
-                                                                                          max_exec_len=max_exec_len,
-                                                                                          debug_print=debug_print,
-                                                                                          execution_fault_mode_name=execution_fault_mode_name,
-                                                                                          instance_seed=instance_seed,
-                                                                                          fault_probability=fault_probability,
-                                                                                          percent_visible_states=percent_visible_states,
-                                                                                          possible_fault_mode_names=possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIF_single_experiment(domain_name=domain_name,
+                                                         ml_model_name=ml_model_name,
+                                                         render_mode=render_mode,
+                                                         max_exec_len=max_exec_len,
+                                                         debug_print=debug_print,
+                                                         execution_fault_mode_name=execution_fault_mode_name,
+                                                         instance_seed=instance_seed,
+                                                         fault_probability=fault_probability,
+                                                         percent_visible_states=percent_visible_states,
+                                                         possible_fault_mode_names=possible_fault_mode_names,
+                                                         num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 # =================================================================================================
@@ -178,9 +148,7 @@ def single_experiment_LunarLander_SIF():
 # =================================================================================================
 def single_experiment_Acrobot_W():
     # changable test settings - weak fault model (W)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -198,37 +166,27 @@ def single_experiment_Acrobot_W():
         percent_visible_states = 100
         possible_fault_mode_names = []
         num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=domain_name,
-                                                                                        ml_model_name=ml_model_name,
-                                                                                        render_mode=render_mode,
-                                                                                        max_exec_len=max_exec_len,
-                                                                                        debug_print=debug_print,
-                                                                                        execution_fault_mode_name=execution_fault_mode_name,
-                                                                                        instance_seed=instance_seed,
-                                                                                        fault_probability=fault_probability,
-                                                                                        percent_visible_states=percent_visible_states,
-                                                                                        possible_fault_mode_names=possible_fault_mode_names,
-                                                                                        num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_W_single_experiment(domain_name=domain_name,
+                                                       ml_model_name=ml_model_name,
+                                                       render_mode=render_mode,
+                                                       max_exec_len=max_exec_len,
+                                                       debug_print=debug_print,
+                                                       execution_fault_mode_name=execution_fault_mode_name,
+                                                       instance_seed=instance_seed,
+                                                       fault_probability=fault_probability,
+                                                       percent_visible_states=percent_visible_states,
+                                                       possible_fault_mode_names=possible_fault_mode_names,
+                                                       num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Acrobot_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -257,37 +215,27 @@ def single_experiment_Acrobot_SN():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=domain_name,
-                                                                                         ml_model_name=ml_model_name,
-                                                                                         render_mode=render_mode,
-                                                                                         max_exec_len=max_exec_len,
-                                                                                         debug_print=debug_print,
-                                                                                         execution_fault_mode_name=execution_fault_mode_name,
-                                                                                         instance_seed=instance_seed,
-                                                                                         fault_probability=fault_probability,
-                                                                                         percent_visible_states=percent_visible_states,
-                                                                                         possible_fault_mode_names=possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SN_single_experiment(domain_name=domain_name,
+                                                        ml_model_name=ml_model_name,
+                                                        render_mode=render_mode,
+                                                        max_exec_len=max_exec_len,
+                                                        debug_print=debug_print,
+                                                        execution_fault_mode_name=execution_fault_mode_name,
+                                                        instance_seed=instance_seed,
+                                                        fault_probability=fault_probability,
+                                                        percent_visible_states=percent_visible_states,
+                                                        possible_fault_mode_names=possible_fault_mode_names,
+                                                        num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Acrobot_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 1
     for i in range(NUM_TRIES):
@@ -316,37 +264,27 @@ def single_experiment_Acrobot_SIF():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=domain_name,
-                                                                                          ml_model_name=ml_model_name,
-                                                                                          render_mode=render_mode,
-                                                                                          max_exec_len=max_exec_len,
-                                                                                          debug_print=debug_print,
-                                                                                          execution_fault_mode_name=execution_fault_mode_name,
-                                                                                          instance_seed=instance_seed,
-                                                                                          fault_probability=fault_probability,
-                                                                                          percent_visible_states=percent_visible_states,
-                                                                                          possible_fault_mode_names=possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIF_single_experiment(domain_name=domain_name,
+                                                         ml_model_name=ml_model_name,
+                                                         render_mode=render_mode,
+                                                         max_exec_len=max_exec_len,
+                                                         debug_print=debug_print,
+                                                         execution_fault_mode_name=execution_fault_mode_name,
+                                                         instance_seed=instance_seed,
+                                                         fault_probability=fault_probability,
+                                                         percent_visible_states=percent_visible_states,
+                                                         possible_fault_mode_names=possible_fault_mode_names,
+                                                         num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Acrobot_SIFU():
     # changable test settings - strong fault model intermittent faults smart (SIFS)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 1
     for i in range(NUM_TRIES):
@@ -375,37 +313,27 @@ def single_experiment_Acrobot_SIFU():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
-                                                                                           ml_model_name=ml_model_name,
-                                                                                           render_mode=render_mode,
-                                                                                           max_exec_len=max_exec_len,
-                                                                                           debug_print=debug_print,
-                                                                                           execution_fault_mode_name=execution_fault_mode_name,
-                                                                                           instance_seed=instance_seed,
-                                                                                           fault_probability=fault_probability,
-                                                                                           percent_visible_states=percent_visible_states,
-                                                                                           possible_fault_mode_names=possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU_single_experiment(domain_name=domain_name,
+                                                          ml_model_name=ml_model_name,
+                                                          render_mode=render_mode,
+                                                          max_exec_len=max_exec_len,
+                                                          debug_print=debug_print,
+                                                          execution_fault_mode_name=execution_fault_mode_name,
+                                                          instance_seed=instance_seed,
+                                                          fault_probability=fault_probability,
+                                                          percent_visible_states=percent_visible_states,
+                                                          possible_fault_mode_names=possible_fault_mode_names,
+                                                          num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Acrobot_SIFU2():
     # changable test settings - strong fault model intermittent faults upgraded 2 (SIFU2)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 1
     for i in range(NUM_TRIES):
@@ -434,37 +362,27 @@ def single_experiment_Acrobot_SIFU2():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU2_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU2_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Acrobot_SIFU3():
     # changable test settings - strong fault model intermittent faults upgraded 3 (SIFU3)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 1
     for i in range(NUM_TRIES):
@@ -493,30 +411,22 @@ def single_experiment_Acrobot_SIFU3():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU3_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU3_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 # =================================================================================================
@@ -524,9 +434,7 @@ def single_experiment_Acrobot_SIFU3():
 # =================================================================================================
 def single_experiment_CartPole_W():
     # changable test settings - weak fault model (W)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -544,37 +452,27 @@ def single_experiment_CartPole_W():
         percent_visible_states = 100
         possible_fault_mode_names = []
         num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=domain_name,
-                                                                                        ml_model_name=ml_model_name,
-                                                                                        render_mode=render_mode,
-                                                                                        max_exec_len=max_exec_len,
-                                                                                        debug_print=debug_print,
-                                                                                        execution_fault_mode_name=execution_fault_mode_name,
-                                                                                        instance_seed=instance_seed,
-                                                                                        fault_probability=fault_probability,
-                                                                                        percent_visible_states=percent_visible_states,
-                                                                                        possible_fault_mode_names=possible_fault_mode_names,
-                                                                                        num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_W_single_experiment(domain_name=domain_name,
+                                                       ml_model_name=ml_model_name,
+                                                       render_mode=render_mode,
+                                                       max_exec_len=max_exec_len,
+                                                       debug_print=debug_print,
+                                                       execution_fault_mode_name=execution_fault_mode_name,
+                                                       instance_seed=instance_seed,
+                                                       fault_probability=fault_probability,
+                                                       percent_visible_states=percent_visible_states,
+                                                       possible_fault_mode_names=possible_fault_mode_names,
+                                                       num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_CartPole_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -596,37 +494,27 @@ def single_experiment_CartPole_SN():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=domain_name,
-                                                                                         ml_model_name=ml_model_name,
-                                                                                         render_mode=render_mode,
-                                                                                         max_exec_len=max_exec_len,
-                                                                                         debug_print=debug_print,
-                                                                                         execution_fault_mode_name=execution_fault_mode_name,
-                                                                                         instance_seed=instance_seed,
-                                                                                         fault_probability=fault_probability,
-                                                                                         percent_visible_states=percent_visible_states,
-                                                                                         possible_fault_mode_names=possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SN_single_experiment(domain_name=domain_name,
+                                                        ml_model_name=ml_model_name,
+                                                        render_mode=render_mode,
+                                                        max_exec_len=max_exec_len,
+                                                        debug_print=debug_print,
+                                                        execution_fault_mode_name=execution_fault_mode_name,
+                                                        instance_seed=instance_seed,
+                                                        fault_probability=fault_probability,
+                                                        percent_visible_states=percent_visible_states,
+                                                        possible_fault_mode_names=possible_fault_mode_names,
+                                                        num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_CartPole_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -648,37 +536,27 @@ def single_experiment_CartPole_SIF():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=domain_name,
-                                                                                          ml_model_name=ml_model_name,
-                                                                                          render_mode=render_mode,
-                                                                                          max_exec_len=max_exec_len,
-                                                                                          debug_print=debug_print,
-                                                                                          execution_fault_mode_name=execution_fault_mode_name,
-                                                                                          instance_seed=instance_seed,
-                                                                                          fault_probability=fault_probability,
-                                                                                          percent_visible_states=percent_visible_states,
-                                                                                          possible_fault_mode_names=possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIF_single_experiment(domain_name=domain_name,
+                                                         ml_model_name=ml_model_name,
+                                                         render_mode=render_mode,
+                                                         max_exec_len=max_exec_len,
+                                                         debug_print=debug_print,
+                                                         execution_fault_mode_name=execution_fault_mode_name,
+                                                         instance_seed=instance_seed,
+                                                         fault_probability=fault_probability,
+                                                         percent_visible_states=percent_visible_states,
+                                                         possible_fault_mode_names=possible_fault_mode_names,
+                                                         num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_CartPole_SIFU():
     # changable test settings - strong fault model intermittent faults smart (SIFS)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -700,37 +578,27 @@ def single_experiment_CartPole_SIFU():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
-                                                                                           ml_model_name=ml_model_name,
-                                                                                           render_mode=render_mode,
-                                                                                           max_exec_len=max_exec_len,
-                                                                                           debug_print=debug_print,
-                                                                                           execution_fault_mode_name=execution_fault_mode_name,
-                                                                                           instance_seed=instance_seed,
-                                                                                           fault_probability=fault_probability,
-                                                                                           percent_visible_states=percent_visible_states,
-                                                                                           possible_fault_mode_names=possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU_single_experiment(domain_name=domain_name,
+                                                          ml_model_name=ml_model_name,
+                                                          render_mode=render_mode,
+                                                          max_exec_len=max_exec_len,
+                                                          debug_print=debug_print,
+                                                          execution_fault_mode_name=execution_fault_mode_name,
+                                                          instance_seed=instance_seed,
+                                                          fault_probability=fault_probability,
+                                                          percent_visible_states=percent_visible_states,
+                                                          possible_fault_mode_names=possible_fault_mode_names,
+                                                          num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_CartPole_SIFU2():
     # changable test settings - strong fault model intermittent faults upgraded 2 (SIFU2)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -752,37 +620,27 @@ def single_experiment_CartPole_SIFU2():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU2_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU2_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_CartPole_SIFU3():
     # changable test settings - strong fault model intermittent faults upgraded 3 (SIFU3)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -804,30 +662,22 @@ def single_experiment_CartPole_SIFU3():
             "[1,0]"
         ]
         num_candidate_fault_modes = 3
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU3_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU3_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 # =================================================================================================
@@ -835,9 +685,7 @@ def single_experiment_CartPole_SIFU3():
 # =================================================================================================
 def single_experiment_MountainCar_W():
     # changable test settings - weak fault model (W)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -855,37 +703,27 @@ def single_experiment_MountainCar_W():
         percent_visible_states = 100
         possible_fault_mode_names = []
         num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=domain_name,
-                                                                                        ml_model_name=ml_model_name,
-                                                                                        render_mode=render_mode,
-                                                                                        max_exec_len=max_exec_len,
-                                                                                        debug_print=debug_print,
-                                                                                        execution_fault_mode_name=execution_fault_mode_name,
-                                                                                        instance_seed=instance_seed,
-                                                                                        fault_probability=fault_probability,
-                                                                                        percent_visible_states=percent_visible_states,
-                                                                                        possible_fault_mode_names=possible_fault_mode_names,
-                                                                                        num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_W_single_experiment(domain_name=domain_name,
+                                                       ml_model_name=ml_model_name,
+                                                       render_mode=render_mode,
+                                                       max_exec_len=max_exec_len,
+                                                       debug_print=debug_print,
+                                                       execution_fault_mode_name=execution_fault_mode_name,
+                                                       instance_seed=instance_seed,
+                                                       fault_probability=fault_probability,
+                                                       percent_visible_states=percent_visible_states,
+                                                       possible_fault_mode_names=possible_fault_mode_names,
+                                                       num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_MountainCar_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -914,37 +752,27 @@ def single_experiment_MountainCar_SN():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=domain_name,
-                                                                                         ml_model_name=ml_model_name,
-                                                                                         render_mode=render_mode,
-                                                                                         max_exec_len=max_exec_len,
-                                                                                         debug_print=debug_print,
-                                                                                         execution_fault_mode_name=execution_fault_mode_name,
-                                                                                         instance_seed=instance_seed,
-                                                                                         fault_probability=fault_probability,
-                                                                                         percent_visible_states=percent_visible_states,
-                                                                                         possible_fault_mode_names=possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SN_single_experiment(domain_name=domain_name,
+                                                        ml_model_name=ml_model_name,
+                                                        render_mode=render_mode,
+                                                        max_exec_len=max_exec_len,
+                                                        debug_print=debug_print,
+                                                        execution_fault_mode_name=execution_fault_mode_name,
+                                                        instance_seed=instance_seed,
+                                                        fault_probability=fault_probability,
+                                                        percent_visible_states=percent_visible_states,
+                                                        possible_fault_mode_names=possible_fault_mode_names,
+                                                        num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_MountainCar_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -973,37 +801,27 @@ def single_experiment_MountainCar_SIF():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=domain_name,
-                                                                                          ml_model_name=ml_model_name,
-                                                                                          render_mode=render_mode,
-                                                                                          max_exec_len=max_exec_len,
-                                                                                          debug_print=debug_print,
-                                                                                          execution_fault_mode_name=execution_fault_mode_name,
-                                                                                          instance_seed=instance_seed,
-                                                                                          fault_probability=fault_probability,
-                                                                                          percent_visible_states=percent_visible_states,
-                                                                                          possible_fault_mode_names=possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIF_single_experiment(domain_name=domain_name,
+                                                         ml_model_name=ml_model_name,
+                                                         render_mode=render_mode,
+                                                         max_exec_len=max_exec_len,
+                                                         debug_print=debug_print,
+                                                         execution_fault_mode_name=execution_fault_mode_name,
+                                                         instance_seed=instance_seed,
+                                                         fault_probability=fault_probability,
+                                                         percent_visible_states=percent_visible_states,
+                                                         possible_fault_mode_names=possible_fault_mode_names,
+                                                         num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_MountainCar_SIFU():
     # changable test settings - strong fault model intermittent faults (SIFS)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1032,37 +850,27 @@ def single_experiment_MountainCar_SIFU():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
-                                                                                           ml_model_name=ml_model_name,
-                                                                                           render_mode=render_mode,
-                                                                                           max_exec_len=max_exec_len,
-                                                                                           debug_print=debug_print,
-                                                                                           execution_fault_mode_name=execution_fault_mode_name,
-                                                                                           instance_seed=instance_seed,
-                                                                                           fault_probability=fault_probability,
-                                                                                           percent_visible_states=percent_visible_states,
-                                                                                           possible_fault_mode_names=possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU_single_experiment(domain_name=domain_name,
+                                                          ml_model_name=ml_model_name,
+                                                          render_mode=render_mode,
+                                                          max_exec_len=max_exec_len,
+                                                          debug_print=debug_print,
+                                                          execution_fault_mode_name=execution_fault_mode_name,
+                                                          instance_seed=instance_seed,
+                                                          fault_probability=fault_probability,
+                                                          percent_visible_states=percent_visible_states,
+                                                          possible_fault_mode_names=possible_fault_mode_names,
+                                                          num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_MountainCar_SIFU2():
     # changable test settings - strong fault model intermittent faults upgraded 2 (SIFU2)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1091,37 +899,27 @@ def single_experiment_MountainCar_SIFU2():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU2_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU2_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_MountainCar_SIFU3():
     # changable test settings - strong fault model intermittent faults upgraded 2 (SIFU2)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1150,39 +948,30 @@ def single_experiment_MountainCar_SIFU3():
             "[2,2,2]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU3_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU3_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
+
 
 # =================================================================================================
 # ============================================= Taxi ==============================================
 # =================================================================================================
 def single_experiment_Taxi_W():
     # changable test settings - weak fault model (W)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1200,37 +989,27 @@ def single_experiment_Taxi_W():
         percent_visible_states = 100
         possible_fault_mode_names = []
         num_candidate_fault_modes = 0
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_W_single_experiment(domain_name=domain_name,
-                                                                                        ml_model_name=ml_model_name,
-                                                                                        render_mode=render_mode,
-                                                                                        max_exec_len=max_exec_len,
-                                                                                        debug_print=debug_print,
-                                                                                        execution_fault_mode_name=execution_fault_mode_name,
-                                                                                        instance_seed=instance_seed,
-                                                                                        fault_probability=fault_probability,
-                                                                                        percent_visible_states=percent_visible_states,
-                                                                                        possible_fault_mode_names=possible_fault_mode_names,
-                                                                                        num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_W_single_experiment(domain_name=domain_name,
+                                                       ml_model_name=ml_model_name,
+                                                       render_mode=render_mode,
+                                                       max_exec_len=max_exec_len,
+                                                       debug_print=debug_print,
+                                                       execution_fault_mode_name=execution_fault_mode_name,
+                                                       instance_seed=instance_seed,
+                                                       fault_probability=fault_probability,
+                                                       percent_visible_states=percent_visible_states,
+                                                       possible_fault_mode_names=possible_fault_mode_names,
+                                                       num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Taxi_SN():
     # changable test settings - strong fault model non-intermittent faults (SN)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1259,37 +1038,27 @@ def single_experiment_Taxi_SN():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SN_single_experiment(domain_name=domain_name,
-                                                                                         ml_model_name=ml_model_name,
-                                                                                         render_mode=render_mode,
-                                                                                         max_exec_len=max_exec_len,
-                                                                                         debug_print=debug_print,
-                                                                                         execution_fault_mode_name=execution_fault_mode_name,
-                                                                                         instance_seed=instance_seed,
-                                                                                         fault_probability=fault_probability,
-                                                                                         percent_visible_states=percent_visible_states,
-                                                                                         possible_fault_mode_names=possible_fault_mode_names,
-                                                                                         num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SN_single_experiment(domain_name=domain_name,
+                                                        ml_model_name=ml_model_name,
+                                                        render_mode=render_mode,
+                                                        max_exec_len=max_exec_len,
+                                                        debug_print=debug_print,
+                                                        execution_fault_mode_name=execution_fault_mode_name,
+                                                        instance_seed=instance_seed,
+                                                        fault_probability=fault_probability,
+                                                        percent_visible_states=percent_visible_states,
+                                                        possible_fault_mode_names=possible_fault_mode_names,
+                                                        num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Taxi_SIF():
     # changable test settings - strong fault model intermittent faults (SIF)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1318,37 +1087,27 @@ def single_experiment_Taxi_SIF():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIF_single_experiment(domain_name=domain_name,
-                                                                                          ml_model_name=ml_model_name,
-                                                                                          render_mode=render_mode,
-                                                                                          max_exec_len=max_exec_len,
-                                                                                          debug_print=debug_print,
-                                                                                          execution_fault_mode_name=execution_fault_mode_name,
-                                                                                          instance_seed=instance_seed,
-                                                                                          fault_probability=fault_probability,
-                                                                                          percent_visible_states=percent_visible_states,
-                                                                                          possible_fault_mode_names=possible_fault_mode_names,
-                                                                                          num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIF_single_experiment(domain_name=domain_name,
+                                                         ml_model_name=ml_model_name,
+                                                         render_mode=render_mode,
+                                                         max_exec_len=max_exec_len,
+                                                         debug_print=debug_print,
+                                                         execution_fault_mode_name=execution_fault_mode_name,
+                                                         instance_seed=instance_seed,
+                                                         fault_probability=fault_probability,
+                                                         percent_visible_states=percent_visible_states,
+                                                         possible_fault_mode_names=possible_fault_mode_names,
+                                                         num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Taxi_SIFU():
     # changable test settings - strong fault model intermittent faults (SIFS)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1377,37 +1136,27 @@ def single_experiment_Taxi_SIFU():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU_single_experiment(domain_name=domain_name,
-                                                                                           ml_model_name=ml_model_name,
-                                                                                           render_mode=render_mode,
-                                                                                           max_exec_len=max_exec_len,
-                                                                                           debug_print=debug_print,
-                                                                                           execution_fault_mode_name=execution_fault_mode_name,
-                                                                                           instance_seed=instance_seed,
-                                                                                           fault_probability=fault_probability,
-                                                                                           percent_visible_states=percent_visible_states,
-                                                                                           possible_fault_mode_names=possible_fault_mode_names,
-                                                                                           num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU_single_experiment(domain_name=domain_name,
+                                                          ml_model_name=ml_model_name,
+                                                          render_mode=render_mode,
+                                                          max_exec_len=max_exec_len,
+                                                          debug_print=debug_print,
+                                                          execution_fault_mode_name=execution_fault_mode_name,
+                                                          instance_seed=instance_seed,
+                                                          fault_probability=fault_probability,
+                                                          percent_visible_states=percent_visible_states,
+                                                          possible_fault_mode_names=possible_fault_mode_names,
+                                                          num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Taxi_SIFU2():
     # changable test settings - strong fault model intermittent faults upgraded 2 (SIFU2)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1436,37 +1185,27 @@ def single_experiment_Taxi_SIFU2():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU2_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU2_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
 
 
 def single_experiment_Taxi_SIFU3():
     # changable test settings - strong fault model intermittent faults upgraded 3 (SIFU3)
-    exp_durations_in_ms = []
-    exp_memories_at_end = []
-    exp_memories_max = []
+    diagnosis_runtimes_ms = []
 
     NUM_TRIES = 10
     for i in range(NUM_TRIES):
@@ -1495,27 +1234,20 @@ def single_experiment_Taxi_SIFU3():
             "[1,0,2,3,4,5]"
         ]
         num_candidate_fault_modes = 10
-        exp_duration_in_ms, exp_memory_at_end, exp_memory_max = run_SIFU3_single_experiment(domain_name=domain_name,
-                                                                                            ml_model_name=ml_model_name,
-                                                                                            render_mode=render_mode,
-                                                                                            max_exec_len=max_exec_len,
-                                                                                            debug_print=debug_print,
-                                                                                            execution_fault_mode_name=execution_fault_mode_name,
-                                                                                            instance_seed=instance_seed,
-                                                                                            fault_probability=fault_probability,
-                                                                                            percent_visible_states=percent_visible_states,
-                                                                                            possible_fault_mode_names=possible_fault_mode_names,
-                                                                                            num_candidate_fault_modes=num_candidate_fault_modes)
-        exp_durations_in_ms.append(exp_duration_in_ms)
-        exp_memories_at_end.append(exp_memory_at_end)
-        exp_memories_max.append(exp_memory_max)
+        diagnosis_runtime_ms = run_SIFU3_single_experiment(domain_name=domain_name,
+                                                           ml_model_name=ml_model_name,
+                                                           render_mode=render_mode,
+                                                           max_exec_len=max_exec_len,
+                                                           debug_print=debug_print,
+                                                           execution_fault_mode_name=execution_fault_mode_name,
+                                                           instance_seed=instance_seed,
+                                                           fault_probability=fault_probability,
+                                                           percent_visible_states=percent_visible_states,
+                                                           possible_fault_mode_names=possible_fault_mode_names,
+                                                           num_candidate_fault_modes=num_candidate_fault_modes)
+        diagnosis_runtimes_ms.append(diagnosis_runtime_ms)
 
-    for e in exp_durations_in_ms:
+    for e in diagnosis_runtimes_ms:
         print(math.floor(e))
-    print(f'avg duration in ms: {math.floor(sum(exp_durations_in_ms) / len(exp_durations_in_ms))}')
-    for e in exp_memories_at_end:
-        print(math.floor(e))
-    print(f'avg memory at end: {math.floor(sum(exp_memories_at_end) / len(exp_memories_at_end))}')
-    for e in exp_memories_max:
-        print(math.floor(e))
-    print(f'avg memory max: {math.floor(sum(exp_memories_max) / len(exp_memories_max))}')
+    print(f'avg duration in ms: {math.floor(sum(diagnosis_runtimes_ms) / len(diagnosis_runtimes_ms))}')
+
