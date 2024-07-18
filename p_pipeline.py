@@ -761,3 +761,98 @@ def run_experimental_setup(arguments, render_mode, debug_print):
     write_records_to_excel(records, experimental_file_name.split(".")[0])
 
     print(9)
+
+
+def run_experimental_setup_new(arguments, render_mode, debug_print):
+    # ### parameters dictionary
+    experimental_file_name = arguments[1]
+    param_dict = read_json_data(f"experimental inputs/{experimental_file_name}")
+
+    # ### prepare the records database to be written to the excel file
+    records = []
+
+    # ### the domain name of this experiment (each experiment file has only one associated domain)
+    domain_name = param_dict['domain_name']
+
+    # ### the machine learning model name of this experiment (each experiment file has one associated ml model)
+    ml_model_name = param_dict['ml_model_name']
+
+    # ### maximum length of the execution for the experiment (each experiment file has one associated length)
+    max_exec_len = 200
+
+    # ### preparing index for experimental execution tracing
+    total_instances_number = \
+          (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]) * len([item for item in param_dict['diagnoser_names'] if item not in ['W', 'SN']])) \
+        + (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][:1])) \
+        + (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities'][-1:]) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][1:]))
+    current_instance_number = 1
+
+    # ### run the experimental loop
+    for execution_fault_mode_name_i, execution_fault_mode_name in enumerate(param_dict['possible_fault_mode_names']):
+        for fault_probability_i, fault_probability in enumerate(param_dict['fault_probabilities']):
+            for instance_seed_i, instance_seed in enumerate(param_dict['instance_seeds']):
+                # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for ranking
+                fault_mode_generator, trajectory_execution, \
+                    faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                                ml_model_name,
+                                                                                                                render_mode,
+                                                                                                                max_exec_len,
+                                                                                                                debug_print,
+                                                                                                                execution_fault_mode_name,
+                                                                                                                instance_seed,
+                                                                                                                fault_probability)
+                for percent_visible_states_i, percent_visible_states in enumerate(param_dict['percent_visible_states']):
+                    # ### generate observation mask
+                    observation_mask = generate_observation_mask(len(observations), percent_visible_states)
+                    # ### calculate largest hidden gap
+                    longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
+                    print(f'PERCENT VISIBLE STATES: {str(percent_visible_states)}')
+                    print(f'OBSERVATION MASK: {str(observation_mask)}')
+                    print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
+                    print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
+                    print(f'observed {len(observation_mask)}/{len(observations)} states')
+
+                    # ### mask the states list
+                    masked_observations = mask_states(observations, observation_mask)
+
+                    for num_candidate_fault_modes_i, num_candidate_fault_modes in enumerate(param_dict['num_candidate_fault_modes']):
+                        # ### prepare candidate fault modes
+                        candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, param_dict['possible_fault_mode_names'], fault_mode_generator)
+
+                        for diagnoser_name_i, diagnoser_name in enumerate(param_dict['diagnoser_names']):
+                            # ### logging
+                            now = datetime.now()
+                            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+                            print(f"{dt_string}: {current_instance_number}/{total_instances_number}")
+                            print(f"execution_fault_mode_name: {execution_fault_mode_name}, fault_probability: {fault_probability}, instance_seed: {instance_seed}, percent_visible_states: {percent_visible_states}, num_candidate_fault_modes: {num_candidate_fault_modes}, diagnose_name: {diagnoser_name}")
+                            print(f"{diagnoser_name}\n")
+
+                            # ### run the algorithm - except special cases of W, SN
+                            if diagnoser_name == "W" and num_candidate_fault_modes != 0:
+                                continue
+                            if diagnoser_name == "SN" and fault_probability != 1.0:
+                                continue
+                            if diagnoser_name != "W" and num_candidate_fault_modes == 0:
+                                continue
+                            if diagnoser_name not in ["W", "SN"] and percent_visible_states < 30:
+                                continue
+                            diagnoser = diagnosers[diagnoser_name]
+                            raw_output = diagnoser(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+
+                            # ### ranking the diagnoses
+                            if diagnoser_name == "W":
+                                output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
+                            else:
+                                output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
+
+                            # ### preparing record for writing to excel file
+                            record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, param_dict['possible_fault_mode_names'], num_candidate_fault_modes,
+                                                    render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
+                                                    candidate_fault_modes, output, diagnoser_name, longest_hidden_state_sequence)
+                            records.append(record)
+                            current_instance_number += 1
+
+    # ### write records to an excel file
+    write_records_to_excel(records, experimental_file_name.split(".")[0])
+
+    print(9)
