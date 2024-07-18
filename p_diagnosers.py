@@ -52,8 +52,12 @@ def W(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obser
 
     output = {
         "diagnoses": D,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": 0.0,
+        "init_rt_ms": 0.0,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": diagnosis_runtime_sec,
+        "totl_rt_ms": diagnosis_runtime_ms,
         "G_max_size":0
     }
 
@@ -73,6 +77,7 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     assert comparators[domain_name](observations[0], S_0)
 
     # initialize time counting
+    initialization_runtime_sec = 0.0
     diagnosis_runtime_sec = 0.0
 
     # initialize G
@@ -82,7 +87,7 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
         A_j = []
         G[key_j] = [candidate_fault_modes[key_j], A_j, S_0]
     te0 = time.time()
-    diagnosis_runtime_sec += te0 - ts0
+    initialization_runtime_sec += te0 - ts0
 
     # running the diagnosis loop
     ts1 = time.time()
@@ -114,12 +119,17 @@ def SN(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obse
     diagnosis_runtime_sec += te1 - ts1
 
     # finilizing the runtime in ms
+    initialization_runtime_ms = initialization_runtime_sec * 1000
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     raw_output = {
         "diagnoses": G,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": initialization_runtime_sec,
+        "init_rt_ms": initialization_runtime_ms,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": initialization_runtime_sec + diagnosis_runtime_sec,
+        "totl_rt_ms": initialization_runtime_ms + diagnosis_runtime_ms,
         "G_max_size": len(candidate_fault_modes)
     }
 
@@ -148,6 +158,7 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
     assert comparators[domain_name](observations[0], S_0)
 
     # initialize time counting
+    initialization_runtime_sec = 0.0
     diagnosis_runtime_sec = 0.0
 
     # initialize maximum size of G
@@ -166,7 +177,7 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
         G[key_j + f'_{I[key_j]}'] = [candidate_fault_modes[key_j], A_j, S_0]
         I[key_j] = I[key_j] + 1
     te0 = time.time()
-    diagnosis_runtime_sec += te0 - ts0
+    initialization_runtime_sec += te0 - ts0
 
     for i in range(1, len(observations)):
         ts1 = time.time()
@@ -261,12 +272,17 @@ def SIF(debug_print, render_mode, instance_seed, ml_model_name, domain_name, obs
             break
 
     # finilizing the runtime in ms
+    initialization_runtime_ms = initialization_runtime_sec * 1000
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     raw_output = {
         "diagnoses": G,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": initialization_runtime_sec,
+        "init_rt_ms": initialization_runtime_ms,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": initialization_runtime_sec + diagnosis_runtime_sec,
+        "totl_rt_ms": initialization_runtime_ms + diagnosis_runtime_ms,
         "G_max_size": G_max_size
     }
 
@@ -286,6 +302,7 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
     assert comparators[domain_name](observations[0], S_0)
 
     # initialize time counting
+    initialization_runtime_sec = 0.0
     diagnosis_runtime_sec = 0.0
 
     # initialize maximum size of G
@@ -303,7 +320,7 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
         G[key_j + f'_{I[key_j]}'] = [candidate_fault_modes[key_j], [None] * (len(observations)-1), None]
         I[key_j] = I[key_j] + 1
     te0 = time.time()
-    diagnosis_runtime_sec += te0 - ts0
+    initialization_runtime_sec += te0 - ts0
 
     # compute index queue (the computed is of the form: [(b1,e1), (b2,e2), ..., (bm,em)]  )
     ts1 = time.time()
@@ -320,7 +337,7 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
     sorted_index_pairs = sorted(index_pairs.keys(), key=lambda k: (index_pairs[k], k))
     index_queue = [(int(item.split("_")[0]), int(item.split("_")[1])) for item in sorted_index_pairs]
     te1 = time.time()
-    diagnosis_runtime_sec += te1 - ts1
+    initialization_runtime_sec += te1 - ts1
 
     for irk in index_queue:
         if len(G) == 1:
@@ -420,12 +437,17 @@ def SIFU(debug_print, render_mode, instance_seed, ml_model_name, domain_name, ob
                 break
 
     # finilizing the runtime in ms
+    initialization_runtime_ms = initialization_runtime_sec * 1000
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     raw_output = {
         "diagnoses": G,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": initialization_runtime_sec,
+        "init_rt_ms": initialization_runtime_ms,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": initialization_runtime_sec + diagnosis_runtime_sec,
+        "totl_rt_ms": initialization_runtime_ms + diagnosis_runtime_ms,
         "G_max_size": G_max_size
     }
 
@@ -445,6 +467,7 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
     assert comparators[domain_name](observations[0], S_0)
 
     # initialize time counting
+    initialization_runtime_sec = 0.0
     diagnosis_runtime_sec = 0.0
 
     # initialize maximum size of G
@@ -462,7 +485,7 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
         G[key_j + f'_{I[key_j]}'] = [candidate_fault_modes[key_j], [None] * (len(observations)-1), None]
         I[key_j] = I[key_j] + 1
     te0 = time.time()
-    diagnosis_runtime_sec += te0 - ts0
+    initialization_runtime_sec += te0 - ts0
 
     # compute index queue (the computed is of the form: [(b1,e1), (b2,e2), ..., (bm,em)]  )
     ts1 = time.time()
@@ -491,7 +514,7 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
     sorted_useful_index_pairs = sorted(useful_index_pairs.keys(), key=lambda k: (useful_index_pairs[k], k))
     index_queue = [(int(item.split("_")[0]), int(item.split("_")[1])) for item in sorted_useful_index_pairs]
     te1 = time.time()
-    diagnosis_runtime_sec += te1 - ts1
+    initialization_runtime_sec += te1 - ts1
 
     for irk in index_queue:
         if len(G) == 1:
@@ -591,12 +614,17 @@ def SIFU2(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
                 break
 
     # finilizing the runtime in ms
+    initialization_runtime_ms = initialization_runtime_sec * 1000
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     raw_output = {
         "diagnoses": G,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": initialization_runtime_sec,
+        "init_rt_ms": initialization_runtime_ms,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": initialization_runtime_sec + diagnosis_runtime_sec,
+        "totl_rt_ms": initialization_runtime_ms + diagnosis_runtime_ms,
         "G_max_size": G_max_size
     }
 
@@ -616,6 +644,7 @@ def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
     assert comparators[domain_name](observations[0], S_0)
 
     # initialize time counting
+    initialization_runtime_sec = 0.0
     diagnosis_runtime_sec = 0.0
 
     # initialize maximum size of G
@@ -633,7 +662,7 @@ def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
         G[key_j + f'_{I[key_j]}'] = [candidate_fault_modes[key_j], [None] * (len(observations)-1), None]
         I[key_j] = I[key_j] + 1
     te0 = time.time()
-    diagnosis_runtime_sec += te0 - ts0
+    initialization_runtime_sec += te0 - ts0
 
     # compute index queue (the computed is of the form: [(b1,e1), (b2,e2), ..., (bm,em)]  )
     # at the same time, collect the action types to be tested
@@ -685,7 +714,7 @@ def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
             action_types_combined.update(index_pairs_failed_sorted[pair][1])
     index_queue = [(int(item.split("_")[0]), int(item.split("_")[1])) for item in index_pairs_failed_sorted_useful.keys()]
     te1 = time.time()
-    diagnosis_runtime_sec += te1 - ts1
+    initialization_runtime_sec += te1 - ts1
 
     for irk in index_queue:
         if len(G) == 1:
@@ -785,12 +814,17 @@ def SIFU3(debug_print, render_mode, instance_seed, ml_model_name, domain_name, o
                 break
 
     # finilizing the runtime in ms
+    initialization_runtime_ms = initialization_runtime_sec * 1000
     diagnosis_runtime_ms = diagnosis_runtime_sec * 1000
 
     raw_output = {
         "diagnoses": G,
-        "diagnosis_runtime_sec": diagnosis_runtime_sec,
-        "diagnosis_runtime_ms": diagnosis_runtime_ms,
+        "init_rt_sec": initialization_runtime_sec,
+        "init_rt_ms": initialization_runtime_ms,
+        "diag_rt_sec": diagnosis_runtime_sec,
+        "diag_rt_ms": diagnosis_runtime_ms,
+        "totl_rt_sec": initialization_runtime_sec + diagnosis_runtime_sec,
+        "totl_rt_ms": initialization_runtime_ms + diagnosis_runtime_ms,
         "G_max_size": G_max_size
     }
 

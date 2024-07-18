@@ -126,12 +126,18 @@ def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
 
     output = {
         "diagnoses": diagnoses,
-        "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
-        "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
+        "init_rt_sec": raw_output["init_rt_sec"],
+        "init_rt_ms": raw_output["init_rt_ms"],
+        "diag_rt_sec": raw_output["diag_rt_sec"],
+        "diag_rt_ms": raw_output["diag_rt_ms"],
+        "totl_rt_sec": raw_output["totl_rt_sec"],
+        "totl_rt_ms": raw_output["totl_rt_ms"],
         "G_max_size": raw_output['G_max_size'],
         "ranks": ranks,
-        "ranking_runtime_sec": ranking_runtime_sec,
-        "ranking_runtime_ms": ranking_runtime_ms
+        "rank_rt_sec": ranking_runtime_sec,
+        "rank_rt_ms": ranking_runtime_ms,
+        "cmpl_rt_sec": raw_output["totl_rt_sec"] + ranking_runtime_sec,
+        "cmpl_rt_ms": raw_output["totl_rt_ms"] + ranking_runtime_ms
     }
     return output
 
@@ -179,12 +185,18 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
 
     output = {
         "diagnoses": diagnoses,
-        "diagnosis_runtime_sec": raw_output['diagnosis_runtime_sec'],
-        "diagnosis_runtime_ms": raw_output['diagnosis_runtime_ms'],
+        "init_rt_sec": raw_output["init_rt_sec"],
+        "init_rt_ms": raw_output["init_rt_ms"],
+        "diag_rt_sec": raw_output["diag_rt_sec"],
+        "diag_rt_ms": raw_output["diag_rt_ms"],
+        "totl_rt_sec": raw_output["totl_rt_sec"],
+        "totl_rt_ms": raw_output["totl_rt_ms"],
         "G_max_size": raw_output['G_max_size'],
         "ranks": ranks,
-        "ranking_runtime_sec": ranking_runtime_sec,
-        "ranking_runtime_ms": ranking_runtime_ms,
+        "rank_rt_sec": ranking_runtime_sec,
+        "rank_rt_ms": ranking_runtime_ms,
+        "cmpl_rt_sec": raw_output["totl_rt_sec"] + ranking_runtime_sec,
+        "cmpl_rt_ms": raw_output["totl_rt_ms"] + ranking_runtime_ms
     }
 
     return output
@@ -244,22 +256,27 @@ def write_records_to_excel(records, experimental_filename):
         {'header': '10_i_percent_visible_states'},
         {'header': '11_O_observation_mask'},
         {'header': '12_O_num_visible_states'},
-        {'header': '13_O_masked_observations'},
-        {'header': '14_i_num_candidate_fault_modes'},
-        {'header': '15_O_candidate_fault_modes'},
-        {'header': '16_i_diagnoser'},
-        {'header': '17_O_diagnoses'},
-        {'header': '18_O_ranks'},
-        {'header': '19_O_num_diagnoses'},
-        {'header': '20_O_correct_diagnosis_rank'},
-        {'header': '21_O_diagnosis_runtime_sec'},
-        {'header': '22_O_diagnosis_runtime_ms'},
-        {'header': '23_O_ranking_runtime_sec'},
-        {'header': '24_O_ranking_runtime_ms'},
-        {'header': '25_O_total_runtime_sec'},
-        {'header': '26_O_total_runtime_ms'},
-        {'header': '27_O_G_max_size'},
-        {'header': '28_O_longest_hidden_state_sequence'}
+        {'header': '13_O_longest_hidden_state_sequence'},
+        {'header': '14_O_masked_observations'},
+        {'header': '15_i_num_candidate_fault_modes'},
+        {'header': '16_O_candidate_fault_modes'},
+        {'header': '17_i_diagnoser'},
+        {'header': '18_O_diagnoses'},
+        {'header': '19_O_ranks'},
+        {'header': '20_O_num_diagnoses'},
+        {'header': '21_O_correct_diagnosis_rank'},
+        {'header': '22_O_init_rt_sec'},
+        {'header': '23_O_init_rt_ms'},
+        {'header': '24_O_diag_rt_sec'},
+        {'header': '25_O_diag_rt_ms'},
+        {'header': '26_O_totl_rt_sec'},
+        {'header': '27_O_totl_rt_ms'},
+        {'header': '28_O_rank_rt_sec'},
+        {'header': '29_O_rank_rt_ms'},
+        {'header': '30_O_cmpl_rt_sec'},
+        {'header': '31_O_cmpl_rt_ms'},
+        {'header': '32_O_G_max_size'},
+
     ]
     rows = []
     for i in range(len(records)):
@@ -277,22 +294,26 @@ def write_records_to_excel(records, experimental_filename):
             record_i['percent_visible_states'],  # 10_i_percent_visible_states
             str(record_i['observation_mask']),  # 11_O_observation_mask
             len(record_i['observation_mask']),  # 12_O_num_visible_states
-            str(record_i['masked_observations']) if record_i['debug_print'] else 'Omitted',  # 13_O_masked_observations
-            record_i['num_candidate_fault_modes'],  # 14_i_num_candidate_fault_modes
-            str(record_i['candidate_fault_modes']),  # 15_O_candidate_fault_modes
-            record_i['diagnoser'],  # 16_i_diagnoser
-            str(list(record_i['output']['diagnoses'])),  # 17_O_diagnoses
-            str(list(record_i['output']['ranks'])),  # 18_O_ranks
-            len(record_i['output']['diagnoses']),  # 19_O_num_diagnoses
-            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] in {"SN", "SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 20_O_correct_diagnosis_rank
-            record_i['output']['diagnosis_runtime_sec'],  # 21_O_diagnosis_runtime_sec
-            record_i['output']['diagnosis_runtime_ms'],  # 22_O_diagnosis_runtime_ms
-            record_i['output']['ranking_runtime_sec'],  # 23_O_ranking_runtime_sec
-            record_i['output']['ranking_runtime_ms'],  # 24_O_ranking_runtime_ms
-            record_i['output']['diagnosis_runtime_sec'] + record_i['output']['ranking_runtime_sec'],  # 25_O_total_runtime_sec
-            record_i['output']['diagnosis_runtime_ms'] + record_i['output']['ranking_runtime_ms'],  # 26_O_total_runtime_ms
-            record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 27_O_G_max_size
-            record_i['longest_hidden_state_sequence']  # 28_O_longest_hidden_state_sequence
+            record_i['longest_hidden_state_sequence'],  # 13_O_longest_hidden_state_sequence
+            str(record_i['masked_observations']) if record_i['debug_print'] else 'Omitted',  # 14_O_masked_observations
+            record_i['num_candidate_fault_modes'],  # 15_i_num_candidate_fault_modes
+            str(record_i['candidate_fault_modes']),  # 16_O_candidate_fault_modes
+            record_i['diagnoser'],  # 17_i_diagnoser
+            str(list(record_i['output']['diagnoses'])),  # 18_O_diagnoses
+            str(list(record_i['output']['ranks'])),  # 19_O_ranks
+            len(record_i['output']['diagnoses']),  # 20_O_num_diagnoses
+            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] in {"SN", "SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 21_O_correct_diagnosis_rank
+            record_i['output']['init_rt_sec'],  # 22_O_init_rt_sec
+            record_i['output']['init_rt_ms'],  # 23_O_init_rt_ms
+            record_i['output']['diag_rt_sec'],  # 24_O_diag_rt_sec
+            record_i['output']['diag_rt_ms'],  # 25_O_diag_rt_ms
+            record_i['output']['totl_rt_sec'],  # 26_O_totl_rt_sec
+            record_i['output']['totl_rt_ms'],  # 27_O_totl_rt_ms
+            record_i['output']['rank_rt_sec'],  # 28_O_rank_rt_sec
+            record_i['output']['rank_rt_ms'],  # 29_O_rank_rt_ms
+            record_i['output']['cmpl_rt_sec'],  # 30_O_cmpl_rt_sec
+            record_i['output']['cmpl_rt_ms'],  # 31_O_cmpl_rt_ms
+            record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 32_O_G_max_size
         ]
         rows.append(row)
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_filename.replace('/', '_')}.xlsx")
@@ -359,7 +380,7 @@ def run_W_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_W")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_SN_single_experiment(domain_name,
@@ -419,7 +440,7 @@ def run_SN_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SN")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_SIF_single_experiment(domain_name,
@@ -479,7 +500,7 @@ def run_SIF_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIF")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_SIFU_single_experiment(domain_name,
@@ -539,7 +560,7 @@ def run_SIFU_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_SIFU2_single_experiment(domain_name,
@@ -599,7 +620,7 @@ def run_SIFU2_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU2")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_SIFU3_single_experiment(domain_name,
@@ -659,7 +680,7 @@ def run_SIFU3_single_experiment(domain_name,
     # ### write records to an excel file
     write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU3")
 
-    return raw_output["diagnosis_runtime_ms"]
+    return raw_output["diag_rt_ms"]
 
 
 def run_experimental_setup(arguments, render_mode, debug_print):
