@@ -781,10 +781,14 @@ def run_experimental_setup_new(arguments, render_mode, debug_print):
     max_exec_len = 200
 
     # ### preparing index for experimental execution tracing
-    total_instances_number = \
-          (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]) * len([item for item in param_dict['diagnoser_names'] if item not in ['W', 'SN']])) \
-        + (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][:1])) \
-        + (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities'][-1:]) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][1:]))
+    W_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][:1]))
+    SN_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities'][-1:]) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIF_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIFU_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIFU2_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIFU3_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][4:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+
+    total_instances_number = W_instance_number + SN_instance_number + SIF_instance_number + SIFU_instance_number + SIFU2_instance_number + SIFU3_instance_number
     current_instance_number = 1
 
     # ### run the experimental loop
@@ -825,16 +829,23 @@ def run_experimental_setup_new(arguments, render_mode, debug_print):
                             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
                             print(f"{dt_string}: {current_instance_number}/{total_instances_number}")
                             print(f"execution_fault_mode_name: {execution_fault_mode_name}, fault_probability: {fault_probability}, instance_seed: {instance_seed}, percent_visible_states: {percent_visible_states}, num_candidate_fault_modes: {num_candidate_fault_modes}, diagnose_name: {diagnoser_name}")
-                            print(f"{diagnoser_name}\n")
+                            print(f"{diagnoser_name}")
 
                             # ### run the algorithm - except special cases of W, SN
                             if diagnoser_name == "W" and num_candidate_fault_modes != 0:
+                                print(f'SKIP\n')
                                 continue
                             if diagnoser_name == "SN" and fault_probability != 1.0:
+                                print(f'SKIP\n')
                                 continue
                             if diagnoser_name != "W" and num_candidate_fault_modes == 0:
+                                print(f'SKIP\n')
                                 continue
-                            if diagnoser_name not in ["W", "SN"] and percent_visible_states < 30:
+                            if diagnoser_name in ["SIF", "SIFU", "SIFU2"] and percent_visible_states < 30:
+                                print(f'SKIP\n')
+                                continue
+                            if diagnoser_name in ["SIFU3"] and percent_visible_states < 20:
+                                print(f'SKIP\n')
                                 continue
                             diagnoser = diagnosers[diagnoser_name]
                             raw_output = diagnoser(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
@@ -850,6 +861,8 @@ def run_experimental_setup_new(arguments, render_mode, debug_print):
                                                     render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
                                                     candidate_fault_modes, output, diagnoser_name, longest_hidden_state_sequence)
                             records.append(record)
+
+                            print(f'\n')
                             current_instance_number += 1
 
     # ### write records to an excel file
