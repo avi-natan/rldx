@@ -4,7 +4,8 @@ import time
 from pygame import mixer  # Load the popular external library
 
 from p_pipeline import run_experimental_setup, run_experimental_setup_new
-from p_single_experiments import single_experiment_LunarLander_W, single_experiment_LunarLander_SN, single_experiment_LunarLander_SIF, \
+from p_single_experiments import single_experiment_manual, \
+    single_experiment_LunarLander_W, single_experiment_LunarLander_SN, single_experiment_LunarLander_SIF, \
     single_experiment_Acrobot_W, single_experiment_Acrobot_SN, single_experiment_Acrobot_SIF, single_experiment_Acrobot_SIFU, single_experiment_Acrobot_SIFU2, single_experiment_Acrobot_SIFU3, \
     single_experiment_CartPole_W, single_experiment_CartPole_SN, single_experiment_CartPole_SIF, single_experiment_CartPole_SIFU, single_experiment_CartPole_SIFU2, single_experiment_CartPole_SIFU3, \
     single_experiment_MountainCar_W, single_experiment_MountainCar_SN, single_experiment_MountainCar_SIF, single_experiment_MountainCar_SIFU, single_experiment_MountainCar_SIFU2, single_experiment_MountainCar_SIFU3, \
@@ -13,6 +14,8 @@ from p_single_experiments import single_experiment_LunarLander_W, single_experim
 if __name__ == '__main__':
     try:
         # == single experiments (for coding and debug purposes) ==
+        single_experiment_manual()
+
         # single_experiment_LunarLander_W()         #
         # single_experiment_LunarLander_SN()        #
         # single_experiment_LunarLander_SIF()       #

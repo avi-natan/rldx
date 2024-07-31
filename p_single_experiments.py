@@ -1,7 +1,82 @@
 import math
 from datetime import datetime
 
-from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment, run_SIFU_single_experiment, run_SIFU2_single_experiment, run_SIFU3_single_experiment
+from h_fault_model_generator import FaultModelGeneratorDiscrete
+from p_diagnosers import diagnosers
+from p_executor import execute_manual
+from p_pipeline import run_SIF_single_experiment, run_SN_single_experiment, run_W_single_experiment, run_SIFU_single_experiment, run_SIFU2_single_experiment, run_SIFU3_single_experiment, separate_trajectory, calculate_largest_hidden_gap, mask_states, rank_diagnoses_WFM, rank_diagnoses_SFM, prepare_record, write_records_to_excel
+
+
+# =================================================================================================
+# ============================================ manual =============================================
+# =================================================================================================
+def single_experiment_manual():
+    domain_name = "CartPole_v1"
+    ml_model_name = "PPO"  # "PPO", "DQN"
+    render_mode = "rgb_array"  # "human", "rgb_array"
+    debug_print = False
+    execution_fault_mode_name = "[0,0]"
+    instance_seed = 6
+    fault_probability = 0.4
+    percent_visible_states = 30
+
+    # ###########################
+    faulty_actions_indices = [7, 20, 21, 23, 25, 27, 31, 32, 36, 39, 40, 41]
+    execution_length = 40
+    observation_mask = [0, 4, 6, 7, 9, 10, 15, 17, 32, 33, 37, 39, 40]
+    diagnoser_name = "SIFU3"
+    candidate_fault_modes_names = [
+        '[0,0]',
+        '[1,0]'
+    ]
+    # ###########################
+
+    fault_mode_generator = FaultModelGeneratorDiscrete()
+    trajectory_execution, faulty_actions_indices = execute_manual(domain_name,
+                                                                  debug_print,
+                                                                  execution_fault_mode_name,
+                                                                  instance_seed,
+                                                                  fault_probability,
+                                                                  render_mode,
+                                                                  ml_model_name,
+                                                                  fault_mode_generator,
+                                                                  execution_length,
+                                                                  faulty_actions_indices)
+    registered_actions, observations = separate_trajectory(trajectory_execution)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
+    print(f'faulty actions indices: {faulty_actions_indices}')
+
+    longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
+    masked_observations = mask_states(observations, observation_mask)
+    print(f'OBSERVATION MASK: {str(observation_mask)}')
+    print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
+    print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
+    print(f'observed {len(observation_mask)}/{len(observations)} states')
+
+    candidate_fault_modes = {}
+    for fmn in candidate_fault_modes_names:
+        fm = fault_mode_generator.generate_fault_model(fmn)
+        candidate_fault_modes[fmn] = fm
+
+    diagnoser = diagnosers[diagnoser_name]
+
+    raw_output = diagnoser(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+
+    if diagnoser_name == "W":
+        output = rank_diagnoses_WFM(raw_output, registered_actions, debug_print)
+    else:
+        output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
+
+    records = []
+    record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, candidate_fault_modes_names, len(candidate_fault_modes_names),
+                            render_mode, ml_model_name, execution_length, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
+                            candidate_fault_modes, output, diagnoser_name, longest_hidden_state_sequence)
+    records.append(record)
+    write_records_to_excel(records, f"single_experiment_manual_{domain_name.split('_')[0]}_{diagnoser_name}")
+
+    print(f'duration in ms: {raw_output["diag_rt_ms"]}')
+
+
 
 
 # =================================================================================================
