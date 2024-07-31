@@ -8,7 +8,7 @@ import xlsxwriter
 
 from h_common import read_json_data
 from h_fault_model_generator import FaultModelGeneratorDiscrete
-from p_diagnosers import diagnosers, SIF, SN, W, SIFU, SIFU2, SIFU3
+from p_diagnosers import diagnosers, SIF, SN, W, SIFU, SIFU2, SIFU3, SIFU4
 from p_executor import execute
 
 
@@ -302,7 +302,7 @@ def write_records_to_excel(records, experimental_filename):
             str(list(record_i['output']['diagnoses'])),  # 18_O_diagnoses
             str(list(record_i['output']['ranks'])),  # 19_O_ranks
             len(record_i['output']['diagnoses']),  # 20_O_num_diagnoses
-            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] in {"SN", "SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 21_O_correct_diagnosis_rank
+            get_ordinal_rank(list(record_i['output']['diagnoses']), list(record_i['output']['ranks']), record_i['execution_fault_mode_name']) if record_i['diagnoser'] in {"SN", "SIF", "SIFU", "SIFU2", "SIFU3", "SIFU4"} else "Irrelevant",  # 21_O_correct_diagnosis_rank
             record_i['output']['init_rt_sec'],  # 22_O_init_rt_sec
             record_i['output']['init_rt_ms'],  # 23_O_init_rt_ms
             record_i['output']['diag_rt_sec'],  # 24_O_diag_rt_sec
@@ -313,7 +313,7 @@ def write_records_to_excel(records, experimental_filename):
             record_i['output']['rank_rt_ms'],  # 29_O_rank_rt_ms
             record_i['output']['cmpl_rt_sec'],  # 30_O_cmpl_rt_sec
             record_i['output']['cmpl_rt_ms'],  # 31_O_cmpl_rt_ms
-            record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3"} else "Irrelevant",  # 32_O_G_max_size
+            record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3", "SIFU4"} else "Irrelevant",  # 32_O_G_max_size
         ]
         rows.append(row)
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_filename.replace('/', '_')}.xlsx")
@@ -683,6 +683,66 @@ def run_SIFU3_single_experiment(domain_name,
     return raw_output["diag_rt_ms"]
 
 
+def run_SIFU4_single_experiment(domain_name,
+                                ml_model_name,
+                                render_mode,
+                                max_exec_len,
+                                debug_print,
+                                execution_fault_mode_name,
+                                instance_seed,
+                                fault_probability,
+                                percent_visible_states,
+                                possible_fault_mode_names,
+                                num_candidate_fault_modes):
+    # ### prepare the records database to be written to the excel file
+    records = []
+
+    # ### prepare the inputs to the algorithm based on the instance inputs, including inputs for rnking
+    fault_mode_generator, trajectory_execution, \
+        faulty_actions_indices, registered_actions, observations = single_experiment_prepare_inputs(domain_name,
+                                                                                                    ml_model_name,
+                                                                                                    render_mode,
+                                                                                                    max_exec_len,
+                                                                                                    debug_print,
+                                                                                                    execution_fault_mode_name,
+                                                                                                    instance_seed,
+                                                                                                    fault_probability)
+    print(f'registered_actions: {[f"{i}:{a}" for i, a in enumerate(registered_actions)]}')
+    print(f'faulty actions indices: {faulty_actions_indices}')
+
+    # ### generate observation mask
+    observation_mask = generate_observation_mask(len(observations), percent_visible_states)
+    # ### calculate largest hidden gap
+    longest_hidden_state_sequence = calculate_largest_hidden_gap(observation_mask)
+    print(f'OBSERVATION MASK: {str(observation_mask)}')
+    print(f'LONGEST HIDDEN STATE SEQUENCE: {longest_hidden_state_sequence}')
+    print(f'HIDDEN STATES: {[oi for oi in range(len(observations)) if oi not in observation_mask]}')
+    print(f'observed {len(observation_mask)}/{len(observations)} states')
+
+    # ### mask the states list
+    masked_observations = mask_states(observations, observation_mask)
+
+    # ### prepare candidate fault modes
+    candidate_fault_modes = prepare_fault_modes(num_candidate_fault_modes, execution_fault_mode_name, possible_fault_mode_names, fault_mode_generator)
+
+    # ### run SIF
+    raw_output = SIFU4(debug_print=debug_print, render_mode=render_mode, instance_seed=instance_seed, ml_model_name=ml_model_name, domain_name=domain_name, observations=masked_observations, candidate_fault_modes=candidate_fault_modes)
+
+    # ### ranking the diagnoses
+    output = rank_diagnoses_SFM(raw_output, registered_actions, debug_print)
+
+    # ### preparing record for writing to excel file
+    record = prepare_record(domain_name, debug_print, execution_fault_mode_name, instance_seed, fault_probability, percent_visible_states, possible_fault_mode_names, num_candidate_fault_modes,
+                            render_mode, ml_model_name, max_exec_len, trajectory_execution, faulty_actions_indices, registered_actions, observations, observation_mask, masked_observations,
+                            candidate_fault_modes, output, "SIFU4", longest_hidden_state_sequence)
+    records.append(record)
+
+    # ### write records to an excel file
+    write_records_to_excel(records, f"single_experiment_{domain_name.split('_')[0]}_SIFU4")
+
+    return raw_output["diag_rt_ms"]
+
+
 def run_experimental_setup(arguments, render_mode, debug_print):
     # ### parameters dictionary
     experimental_file_name = arguments[1]
@@ -784,11 +844,12 @@ def run_experimental_setup_new(arguments, render_mode, debug_print):
     W_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][:1]))
     SN_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities'][-1:]) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states']) * len(param_dict['num_candidate_fault_modes'][1:]))
     SIF_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
-    SIFU_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
-    SIFU2_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
-    SIFU3_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][4:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    # SIFU_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    # SIFU2_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIFU3_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
+    SIFU4_instance_number = (len(param_dict['possible_fault_mode_names']) * len(param_dict['fault_probabilities']) * len(param_dict['instance_seeds']) * len(param_dict['percent_visible_states'][5:]) * len(param_dict['num_candidate_fault_modes'][1:]))
 
-    total_instances_number = W_instance_number + SN_instance_number + SIF_instance_number + SIFU_instance_number + SIFU2_instance_number + SIFU3_instance_number
+    total_instances_number = W_instance_number + SN_instance_number + SIF_instance_number + 0 + 0 + SIFU3_instance_number + SIFU4_instance_number
     current_instance_number = 1
 
     # ### run the experimental loop
@@ -844,7 +905,7 @@ def run_experimental_setup_new(arguments, render_mode, debug_print):
                             if diagnoser_name in ["SIF", "SIFU", "SIFU2"] and percent_visible_states < 30:
                                 print(f'SKIP\n')
                                 continue
-                            if diagnoser_name in ["SIFU3"] and percent_visible_states < 20:
+                            if diagnoser_name in ["SIFU3", "SIFU4"] and percent_visible_states < 30:
                                 print(f'SKIP\n')
                                 continue
                             diagnoser = diagnosers[diagnoser_name]
