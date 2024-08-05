@@ -6,10 +6,10 @@ from pygame import mixer  # Load the popular external library
 from p_pipeline import run_experimental_setup, run_experimental_setup_new
 from p_single_experiments import single_experiment_manual, \
     single_experiment_LunarLander_W, single_experiment_LunarLander_SN, single_experiment_LunarLander_SIF, \
-    single_experiment_Acrobot_W, single_experiment_Acrobot_SN, single_experiment_Acrobot_SIF, single_experiment_Acrobot_SIFU, single_experiment_Acrobot_SIFU2, single_experiment_Acrobot_SIFU3, single_experiment_Acrobot_SIFU4, \
-    single_experiment_CartPole_W, single_experiment_CartPole_SN, single_experiment_CartPole_SIF, single_experiment_CartPole_SIFU, single_experiment_CartPole_SIFU2, single_experiment_CartPole_SIFU3, single_experiment_CartPole_SIFU4, \
-    single_experiment_MountainCar_W, single_experiment_MountainCar_SN, single_experiment_MountainCar_SIF, single_experiment_MountainCar_SIFU, single_experiment_MountainCar_SIFU2, single_experiment_MountainCar_SIFU3, single_experiment_MountainCar_SIFU4, \
-    single_experiment_Taxi_W, single_experiment_Taxi_SN, single_experiment_Taxi_SIF, single_experiment_Taxi_SIFU, single_experiment_Taxi_SIFU2, single_experiment_Taxi_SIFU3, single_experiment_Taxi_SIFU4
+    single_experiment_Acrobot_W, single_experiment_Acrobot_SN, single_experiment_Acrobot_SIF, single_experiment_Acrobot_SIFU, single_experiment_Acrobot_SIFU2, single_experiment_Acrobot_SIFU3, single_experiment_Acrobot_SIFU4, single_experiment_Acrobot_SIFU5, \
+    single_experiment_CartPole_W, single_experiment_CartPole_SN, single_experiment_CartPole_SIF, single_experiment_CartPole_SIFU, single_experiment_CartPole_SIFU2, single_experiment_CartPole_SIFU3, single_experiment_CartPole_SIFU4, single_experiment_CartPole_SIFU5, \
+    single_experiment_MountainCar_W, single_experiment_MountainCar_SN, single_experiment_MountainCar_SIF, single_experiment_MountainCar_SIFU, single_experiment_MountainCar_SIFU2, single_experiment_MountainCar_SIFU3, single_experiment_MountainCar_SIFU4, single_experiment_MountainCar_SIFU5, \
+    single_experiment_Taxi_W, single_experiment_Taxi_SN, single_experiment_Taxi_SIF, single_experiment_Taxi_SIFU, single_experiment_Taxi_SIFU2, single_experiment_Taxi_SIFU3, single_experiment_Taxi_SIFU4, single_experiment_Taxi_SIFU5
 
 if __name__ == '__main__':
     try:
@@ -27,6 +27,7 @@ if __name__ == '__main__':
         # single_experiment_Acrobot_SIFU2()        # OK ALL
         # single_experiment_Acrobot_SIFU3()        # OK ALL
         # single_experiment_Acrobot_SIFU4()        # OK ALL
+        # single_experiment_Acrobot_SIFU5()        # OK ALL
 
         # single_experiment_CartPole_W()           # OK ALL
         # single_experiment_CartPole_SN()          # OK ALL
@@ -35,6 +36,7 @@ if __name__ == '__main__':
         # single_experiment_CartPole_SIFU2()       # OK ALL
         # single_experiment_CartPole_SIFU3()       # OK ALL
         # single_experiment_CartPole_SIFU4()       # OK ALL
+        # single_experiment_CartPole_SIFU5()       # OK ALL
 
         # single_experiment_MountainCar_W()        # OK ALL
         # single_experiment_MountainCar_SN()       # OK ALL
@@ -43,6 +45,7 @@ if __name__ == '__main__':
         # single_experiment_MountainCar_SIFU2()    # OK ALL
         # single_experiment_MountainCar_SIFU3()    # OK ALL
         # single_experiment_MountainCar_SIFU4()    # OK ALL
+        # single_experiment_MountainCar_SIFU5()    # OK ALL
 
         # single_experiment_Taxi_W()               # OK ALL
         # single_experiment_Taxi_SN()              # OK ALL
@@ -51,6 +54,7 @@ if __name__ == '__main__':
         # single_experiment_Taxi_SIFU2()           # OK ALL
         # single_experiment_Taxi_SIFU3()           # OK ALL
         # single_experiment_Taxi_SIFU4()           # OK ALL
+        # single_experiment_Taxi_SIFU5()           # OK ALL
 
         # ================== experimental setup ==================
         render_mode = "rgb_array"       # "human", "rgb_array"
