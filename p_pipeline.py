@@ -133,6 +133,7 @@ def rank_diagnoses_WFM(raw_output, registered_actions, debug_print):
         "totl_rt_sec": raw_output["totl_rt_sec"],
         "totl_rt_ms": raw_output["totl_rt_ms"],
         "G_max_size": raw_output['G_max_size'],
+        "diagnosis_actions": [],
         "ranks": ranks,
         "rank_rt_sec": ranking_runtime_sec,
         "rank_rt_ms": ranking_runtime_ms,
@@ -146,6 +147,7 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
     ranking_start_time = time.time()
     G = raw_output['diagnoses']
     diagnoses = []
+    diagnosis_actions = []
     ranks = []
 
     for key_j in G:
@@ -172,12 +174,14 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
             rank = num_actual_faults * 1.0 / num_potential_faults
 
         k_j = key_j.split('_')[0]
-        diagnoses.append(k_j)
-        ranks.append(rank)
+        if k_j not in diagnoses:
+            diagnoses.append(k_j)
+            diagnosis_actions.append(actions_j)
+            ranks.append(rank)
 
-    zipped_lists = zip(diagnoses, ranks)
+    zipped_lists = zip(diagnoses, diagnosis_actions, ranks)
     sorted_zipped_lists = sorted(zipped_lists, key=lambda x: x[-1], reverse=True)
-    diagnoses, ranks = zip(*sorted_zipped_lists)
+    diagnoses, diagnosis_actions, ranks = zip(*sorted_zipped_lists)
 
     ranking_end_time = time.time()
     ranking_runtime_sec = ranking_end_time - ranking_start_time
@@ -192,6 +196,7 @@ def rank_diagnoses_SFM(raw_output, registered_actions, debug_print):
         "totl_rt_sec": raw_output["totl_rt_sec"],
         "totl_rt_ms": raw_output["totl_rt_ms"],
         "G_max_size": raw_output['G_max_size'],
+        "diagnosis_actions": diagnosis_actions,
         "ranks": ranks,
         "rank_rt_sec": ranking_runtime_sec,
         "rank_rt_ms": ranking_runtime_ms,
@@ -276,7 +281,7 @@ def write_records_to_excel(records, experimental_filename):
         {'header': '30_O_cmpl_rt_sec'},
         {'header': '31_O_cmpl_rt_ms'},
         {'header': '32_O_G_max_size'},
-
+        {'header': '33_O_diagnosis_actions'}
     ]
     rows = []
     for i in range(len(records)):
@@ -314,6 +319,7 @@ def write_records_to_excel(records, experimental_filename):
             record_i['output']['cmpl_rt_sec'],  # 30_O_cmpl_rt_sec
             record_i['output']['cmpl_rt_ms'],  # 31_O_cmpl_rt_ms
             record_i['output']['G_max_size'] if record_i['diagnoser'] in {"SIF", "SIFU", "SIFU2", "SIFU3", "SIFU4", "SIFU5", "SIFU6"} else "Irrelevant",  # 32_O_G_max_size
+            str(list(record_i['output']['diagnosis_actions'])) if record_i['diagnoser'] in {"SIF"} else "Irrelevant"  # 33_O_diagnosis_actions
         ]
         rows.append(row)
     workbook = xlsxwriter.Workbook(f"experimental results/{experimental_filename.replace('/', '_')}.xlsx")
