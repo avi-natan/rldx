@@ -300,7 +300,7 @@ def write_records_to_excel(records, experimental_filename):
             str(record_i['observation_mask']),  # 11_O_observation_mask
             len(record_i['observation_mask']),  # 12_O_num_visible_states
             record_i['longest_hidden_state_sequence'],  # 13_O_longest_hidden_state_sequence
-            str(record_i['masked_observations']) if record_i['debug_print'] else 'Omitted',  # 14_O_masked_observations
+            str(record_i['masked_observations']) if record_i['diagnoser'] in {"SIF"} else 'Omitted',  # 14_O_masked_observations
             record_i['num_candidate_fault_modes'],  # 15_i_num_candidate_fault_modes
             str(record_i['candidate_fault_modes']),  # 16_O_candidate_fault_modes
             record_i['diagnoser'],  # 17_i_diagnoser
